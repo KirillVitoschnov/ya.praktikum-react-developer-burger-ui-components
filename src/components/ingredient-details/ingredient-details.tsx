@@ -29,7 +29,7 @@ export default function IngredientDetails({
         <div className={s.details}>
             <img
                 src={image}
-                alt="ингредиент"
+                alt={name}
                 className={`${s.details__img} mb-4`}
             />
             <p className={`text text_type_main-medium mb-8 ${s.details__name}`}>

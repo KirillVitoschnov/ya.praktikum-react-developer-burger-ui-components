@@ -47,7 +47,7 @@ export default function Card(
     <>
       <div className={`${s.card}`} onClick={openPopup}>
         <Counter count={counter} size="default" extraClass="m-1" />
-        <img className={`${s.card__img} mb-1`} src={image} alt="ингридиент" />
+        <img className={`${s.card__img} mb-1`} src={image} alt={name} />
         <div className={`${s.card__price}`}>
           <span className="text text_type_digits-default mr-2">{price}</span>
           <CurrencyIcon type="primary" />
