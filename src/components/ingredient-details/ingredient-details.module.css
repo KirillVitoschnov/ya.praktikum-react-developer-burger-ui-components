@@ -1,0 +1,21 @@
+.details {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  column-gap: 20px;
+}
+
+.details__compound {
+  display: flex;
+  column-gap: 20px;
+  margin: 0 auto;
+}
+
+.details__img {
+  width: 480px;
+  height: 240px;
+}
+
+.details__name {
+  text-align: center;
+}

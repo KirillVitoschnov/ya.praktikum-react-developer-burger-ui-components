@@ -1,0 +1,10 @@
+.burger {
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.burger__left {
+  width: 600px;
+  height: 80vh;
+  overflow: auto;
+}
