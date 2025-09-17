@@ -1,0 +1,43 @@
+.modal {
+  width: 720px;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  background: rgb(28, 28, 33);
+  position: relative;
+  border-radius: 40px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.modal__header_confirm {
+  display: block;
+}
+
+.modal__btn {
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.modal__btn_confirm {
+  position: absolute;
+  top: 60px;
+  right: 40px;
+}
+
+.modal__name {
+  align-self: center;
+}
+
+.modal__confirm {
+  text-align: center;
+}

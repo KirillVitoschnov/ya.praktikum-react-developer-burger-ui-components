@@ -1,0 +1,33 @@
+.header {
+  box-sizing: border-box;
+}
+
+.burgerConstructor {
+  display: flex;
+  width: 1280px;
+  height: 88px;
+  align-items: center;
+}
+
+.icons {
+  display: flex;
+  width: 383px;
+  justify-content: space-between;
+  margin: 0 112px 0 0;
+  padding: 0;
+}
+
+.iconBox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 16px 0;
+}
+
+.profile {
+  margin-left: auto;
+}
+
+.text {
+  margin-left: 8px;
+}

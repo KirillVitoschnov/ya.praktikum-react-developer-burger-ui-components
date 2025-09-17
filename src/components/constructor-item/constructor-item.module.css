@@ -1,0 +1,19 @@
+.container {
+  display: flex;
+  justify-content: end;
+  row-gap: 8px;
+  align-items: center;
+}
+
+.container__item {
+  width: 100%;
+  flex-grow: 0;
+  margin: 0 0 0 8px;
+}
+
+.container__btn {
+  background: none;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
