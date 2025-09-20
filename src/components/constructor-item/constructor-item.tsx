@@ -1,20 +1,22 @@
-import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components"
-import type {XYCoord} from 'dnd-core'
-import s from "./constructor-item.module.css"
-import {ConstructorItemIgridient, Ingridient} from "../../types/types"
-import {useDrag, useDrop} from "react-dnd"
-import {useRef} from "react"
-import {useAppDispatch} from "../../services/store";
-import {setConstructorItem} from "../../services/constructor/constructorItemsSlice"
+import { ConstructorElement, DragIcon } from "@ya.praktikum/react-developer-burger-ui-components";
+import type { XYCoord } from "dnd-core";
+import s from "./constructor-item.module.css";
+import { ConstructorItemIgridient } from "../../types/types";
+import { useDrag, useDrop } from "react-dnd";
+import { useRef } from "react";
+import { useAppDispatch } from "../../services/store";
+import { setConstructorItem } from "../../services/constructor/constructorItemsSlice";
 
 interface Props {
-    ingridient: ConstructorItemIgridient
-    name: string
-    position?: "top" | "bottom" | undefined
-    isLocked?: boolean
-    index: number
-    handleClose: (index: number) => void
+    ingridient: ConstructorItemIgridient;
+    name: string;
+    position?: "top" | "bottom";
+    isLocked?: boolean;
+    index: number;
+    handleClose: (index: number) => void;
 }
+
+type DndItem = { ingridient: ConstructorItemIgridient; index: number };
 
 export default function ConstructorItem({
                                             ingridient,
@@ -22,88 +24,63 @@ export default function ConstructorItem({
                                             position,
                                             isLocked,
                                             index,
-                                            handleClose,
+                                            handleClose
                                         }: Props) {
-    const {price, image, uuid} = ingridient;
+    const { price, image } = ingridient;
+    const ref = useRef<HTMLDivElement | null>(null);
+    const dispatch = useAppDispatch();
 
-    const ref = useRef(null)
-    const dispatch = useAppDispatch()
-
-
-    const [{isHover}, dropTarget] = useDrop({
-        accept: ['sauce', 'main'],
-        drop(item: { ingridient: Ingridient, index: number }, monitor) {
-            if (!ref.current) {
-                return
-            }
-            const dragIndex = item.index
-            const hoverIndex = index
-
-            if (dragIndex === hoverIndex) {
-                return
-            }
-
-            const hoverBoundingRect = (ref.current as any).getBoundingClientRect()
-
-            const hoverMiddleY =
-                (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
-
-            const clientOffset = monitor.getClientOffset()
-
-            const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
-
-            if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-                return
-            }
-
-            if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-                return
-            }
-
-            dispatch(setConstructorItem({
-                index: index,
-                start: dragIndex,
-                end: hoverIndex,
-                ingridient: item.ingridient
-            }))
-
-            item.index = hoverIndex
+    const [{ isHover }, drop] = useDrop<DndItem, void, { isHover: boolean }>({
+        accept: "constructor-item",
+        hover(item, monitor) {
+            if (!ref.current) return;
+            const dragIndex = item.index;
+            const hoverIndex = index;
+            if (dragIndex === hoverIndex) return;
+            const rect = ref.current.getBoundingClientRect();
+            const middleY = (rect.bottom - rect.top) / 2;
+            const clientOffset = monitor.getClientOffset();
+            if (!clientOffset) return;
+            const hoverClientY = (clientOffset as XYCoord).y - rect.top;
+            if (dragIndex < hoverIndex && hoverClientY < middleY) return;
+            if (dragIndex > hoverIndex && hoverClientY > middleY) return;
+            dispatch(setConstructorItem({ start: dragIndex, end: hoverIndex }));
+            item.index = hoverIndex;
         },
-        collect: monitor => ({
-            isHover: monitor.isOver(),
-            handlerId: monitor.getHandlerId()
-        })
+        collect: (m) => ({ isHover: m.isOver() })
     });
 
-    const [{isDragging}, dragRef] = useDrag({
-        type: ingridient?.type ?? "none",
-        item: {ingridient, index},
-        collect: monitor => ({
-            isDragging: monitor.isDragging()
-        })
+    const [{ isDragging }, drag] = useDrag({
+        type: "constructor-item",
+        item: { ingridient, index },
+        collect: (monitor) => ({ isDragging: monitor.isDragging() })
     });
-    const opacity = isDragging ? 0 : 1
-    !position && dragRef(dropTarget(ref))
+
+    if (!position) drag(drop(ref));
+
+    const opacity = isDragging ? 0 : 1;
 
     return (
         <div
             className={s.container}
-            style={{opacity}}
-            ref={position ? dropTarget : ref}>
-            {position === undefined
-                &&
+            style={{ opacity }}
+            ref={position ? ref : ref}
+        >
+            {position === undefined && (
                 <button className={s.container__btn}>
-                    <DragIcon type="primary"/>
-                </button>}
+                    <DragIcon type="primary" />
+                </button>
+            )}
             <ConstructorElement
                 type={position}
-                isLocked={isLocked}
+                isLocked={Boolean(isLocked)}
                 text={name}
                 price={price}
                 thumbnail={image}
                 extraClass={s.container__item}
                 handleClose={() => handleClose(index)}
             />
+            <div className={isHover ? s.hover : ""} />
         </div>
-    )
+    );
 }

@@ -1,52 +1,66 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {ConstructorItemIgridient, Ingridient, InitialStateConstructor} from "../../types/types";
-import uniqid from 'uniqid';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { ConstructorItemIgridient, Ingridient, InitialStateConstructor } from "../../types/types";
 
 const initialState: InitialStateConstructor = {
     bun: null,
     constructorItems: [],
     constructorItemsRequest: false,
-    constructorItemsFailed: false,
+    constructorItemsFailed: false
 };
 
-const addUUID = (ingredient: Ingridient): ConstructorItemIgridient => ({...ingredient, uuid: uniqid()})
+type AddPayload = {
+    index?: number;
+    start?: number;
+    end?: number;
+    ingridient: ConstructorItemIgridient;
+};
+
+const genId = () =>
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
 const constructorSlice = createSlice({
-    name: 'constructorItems',
+    name: "constructorItems",
     initialState,
     reducers: {
         clearConstructor(state) {
-            state.constructorItems = []
-            state.bun = null
+            state.constructorItems = [];
+            state.bun = null;
         },
-        addConstructorItem(state, {payload}) {
-            if (payload.ingridient.type === "bun") {
-                state.bun! = {...payload.ingridient}
-            } else {
-                state.constructorItems.push(payload.ingridient)
-            }
+        addConstructorItem: {
+            reducer: (state, { payload }: PayloadAction<AddPayload>) => {
+                const item = payload.ingridient;
+                if (item.type === "bun") {
+                    state.bun = item;
+                } else if (payload.index === undefined) {
+                    state.constructorItems.push(item);
+                } else {
+                    state.constructorItems.splice(payload.index, 0, item);
+                }
+            },
+            prepare: (payload: { index?: number; start?: number; end?: number; ingridient: Ingridient }) => ({
+                payload: {
+                    ...payload,
+                    ingridient: { ...payload.ingridient, uniqueId: genId() }
+                }
+            })
         },
-        setConstructorItem(state, {payload}) {
-            const new_array = state.constructorItems.slice()
-            const new_ingridient_start = new_array.splice(payload.start!, 1)[0]
-            const new_ingridient_end = new_array.splice(payload.end!, 1)[0]
-            new_array.splice(payload.end!, 0, new_ingridient_start)
-            new_array.splice(payload.start!, 0, new_ingridient_end)
-            state.constructorItems = new_array
+        setConstructorItem(state, { payload }: PayloadAction<{ start: number; end: number }>) {
+            const list = state.constructorItems.slice();
+            const a = list.splice(payload.start, 1)[0];
+            const b = list.splice(payload.end > payload.start ? payload.end - 1 : payload.end, 1)[0];
+            list.splice(payload.end, 0, a);
+            list.splice(payload.start, 0, b);
+            state.constructorItems = list;
         },
-        deleteItem(state, {payload}) {
-            const new_array = state.constructorItems.slice()
-            new_array.splice(payload, 1)
-            state.constructorItems = new_array
-        },
-    },
+        deleteItem(state, { payload }: PayloadAction<number>) {
+            const list = state.constructorItems.slice();
+            list.splice(payload, 1);
+            state.constructorItems = list;
+        }
+    }
 });
 
-export const {
-    clearConstructor,
-    addConstructorItem,
-    setConstructorItem,
-    deleteItem
-} = constructorSlice.actions;
-
+export const { clearConstructor, addConstructorItem, setConstructorItem, deleteItem } = constructorSlice.actions;
 export default constructorSlice.reducer;

@@ -11,40 +11,28 @@ export type Ingridient = {
     image_mobile: string;
     image_large: string;
     __v: number;
-}
+};
 
 export interface ConstructorItemIgridient extends Ingridient {
-    uuid?: string
+    uniqueId: string;
 }
 
 export type InitialStateIngridients = {
     ingridients: Ingridient[];
     ingridientsRequest: boolean;
     ingridientsFailed: boolean;
-}
+};
 
 export type InitialStateConstructor = {
-    bun: ConstructorItemIgridient | null,
+    bun: ConstructorItemIgridient | null;
     constructorItems: ConstructorItemIgridient[];
     constructorItemsRequest: boolean;
     constructorItemsFailed: boolean;
-}
-
-export type InitialStateModalItem = {
-    modalItem: Ingridient;
-}
-
-export type InitialStateTab = {
-    currentTab: string;
-}
+};
 
 export type InitialStateOrderCost = {
     orderName: string;
-    orderNumber: number
-    orderCost: number
-}
+    orderNumber: number;
+    orderCost: number;
+};
 
-export interface Res extends Response {
-    success: boolean
-    data: Ingridient[]
-}
