@@ -1,50 +1,96 @@
-import { useMemo } from "react";
-import s from "./burger-constructor.module.css";
-import ConfirmOrder from "../confirm-order/confirm-order";
+import uniqid from "uniqid";
+import { useDrop } from "react-dnd";
+import { Ingridient } from "../../types/types";
+import { useAppDispatch, useAppSelector } from "../../services/store";
+import { addConstructorItem, deleteItem } from "../../services/constructor/constructorItemsSlice";
 import ConstructorItem from "../constructor-item/constructor-item";
+import ConfirmOrder from "../confirm-order/confirm-order";
+import s from "./burger-constructor.module.css";
 
-import bunBottom from "../../images/bun-bottom.png";
-import sauce from "../../images/sauce.png";
-import meet from "../../images/meet.png";
+type DragPayload = { ingridient: Ingridient; index?: number };
 
-interface Props {
-    data: never[];
-}
+export default function BurgerConstructor() {
+    const { constructorItems: items, bun } = useAppSelector((st) => st.constructorItems);
+    const send = useAppDispatch();
 
-type Piece = {
-    position?: "top" | "bottom";
-    isLocked?: boolean;
-    thumbnail?: string;
-};
+    const removeAt = (idx: number) => {
+        send(deleteItem(idx));
+    };
 
-export default function BurgerConstructor({ data }: Props) {
-    const items: Piece[] = useMemo(
-        () => [
-            { position: "top", isLocked: true },
-            { thumbnail: sauce },
-            { thumbnail: meet },
-            { position: "bottom", thumbnail: bunBottom, isLocked: true },
-        ],
-        []
+    const [{ isHover }, dropRef] = useDrop({
+        accept: ["bun", "sauce", "main"],
+        drop(payload: DragPayload) {
+            if (payload.index === undefined) {
+                send(
+                    addConstructorItem({
+                        index: undefined,
+                        start: undefined,
+                        end: undefined,
+                        ingridient: payload.ingridient,
+                    })
+                );
+            }
+        },
+        collect: (m) => ({
+            isHover: m.isOver(),
+            handlerId: m.getHandlerId(),
+        }),
+    });
+
+    const TopBun = bun ? (
+        <ConstructorItem
+            key={uniqid()}
+            name={`${bun.name} (верх)`}
+            ingridient={bun}
+            position="top"
+            isLocked
+            index={0}
+            handleClose={removeAt}
+        />
+    ) : null;
+
+    const BottomBun = bun ? (
+        <ConstructorItem
+            key={uniqid()}
+            name={`${bun.name} (низ)`}
+            ingridient={bun}
+            position="bottom"
+            isLocked
+            index={-1}
+            handleClose={removeAt}
+        />
+    ) : null;
+
+    const Middle = items.map((it, i) =>
+        it.type === "bun" ? null : (
+            <ConstructorItem
+                key={uniqid()}
+                name={it.name}
+                ingridient={it}
+                position={undefined}
+                isLocked={false}
+                index={i}
+                handleClose={removeAt}
+            />
+        )
     );
 
     return (
-        <section className={`${s.root} pt-25 pr-4 pl-4`} aria-label="Burger constructor">
-            <ul className={s.stack} role="list">
-                {items.map((item, idx) => (
-                    <li key={`${item.position ?? "mid"}-${idx}`} className={s.cell}>
-                        <ConstructorItem
-                            position={item.position as any}
-                            isLocked={item.isLocked}
-                            thumbnail={item.thumbnail as any}
-                        />
-                    </li>
-                ))}
-            </ul>
-
-            <div className={s.footer}>
-                <ConfirmOrder price="100" />
+        <section className={s.main}>
+            <div
+                ref={dropRef}
+                className={`${s.main__container} pt-25 pr-4 pl-4 mb-10 ${isHover ? s.main__container_green : ""}`}
+            >
+                {TopBun}
+                {Middle}
+                {BottomBun}
             </div>
+
+            {items.map((it) => (
+                <p key={uniqid()}>{it.name}</p>
+            ))}
+
+            <ConfirmOrder />
         </section>
     );
 }
