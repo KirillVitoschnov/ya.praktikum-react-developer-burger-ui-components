@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PasswordInput, Input as BurgerInput, Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./ResetPasswordPage.module.css";
 import { request } from "../../utils/request";
@@ -18,12 +18,6 @@ export default function ResetPasswordPage() {
     const [error, setError] = React.useState<string | null>(null);
 
     const navigate = useNavigate();
-    const location = useLocation();
-
-    React.useEffect(() => {
-        const fromForgot = (location.state as { fromForgot?: boolean } | undefined)?.fromForgot;
-
-    }, []);
 
     const isPasswordValid = password.length >= 6;
     const isTokenValid = token.trim().length > 0;
