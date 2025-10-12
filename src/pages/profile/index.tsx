@@ -130,8 +130,6 @@ export default function ProfilePage() {
 
             <section className={styles.content}>
                 <form className={styles.card} onSubmit={handleSave} noValidate>
-                    <h1 className="text text_type_main-large">Профиль</h1>
-
                     <div className={styles.fieldRow}>
                         <BurgerInput
                             name="name"
