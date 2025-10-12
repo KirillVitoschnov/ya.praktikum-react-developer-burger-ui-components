@@ -1,15 +1,9 @@
-.bar {
+.confirm {
     display: flex;
     align-items: center;
-    /* прижимаем блок к правому нижнему краю родителя-колонки */
-    margin-left: auto;
-    margin-top: auto;
+    margin: auto 0 0 auto;
 }
 
-.value {
-    /* хук под возможные будущие стили цены */
-}
-
-.icon {
+.confirm__img {
     display: inline-block;
 }

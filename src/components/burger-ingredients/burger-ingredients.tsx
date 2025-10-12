@@ -1,33 +1,37 @@
-import styles from "./burger-ingredients.module.css";
-import ListIngridient from "../list-ingridient/list-ingridient";
-import ingridients from "../../utils/ingridients";
+import { useEffect, useMemo } from "react";
+import { useAppDispatch, useAppSelector } from "../../services/store";
+import { fetchIngridients } from "../../services/ingridients/ingridientsSlice";
 import BurgerHeader from "../burger-header/burger-header";
+import ListIngridient from "../list-ingridient/list-ingridient";
+import s from "./burger-ingredients.module.css";
 
-interface Props {
-  data: never[]
-}
+export default function BurgerIngredients() {
+    const dispatch = useAppDispatch();
+    const { ingridients } = useAppSelector((state) => state.ingridients);
 
-export default function BurgerIngridients({ data }: Props) {
-  const filterItems = (array: typeof ingridients, type: string) => {
-    const mainItems = array.filter((item) => item.type === type);
-      return <ListIngridient title={
-          type === "main"
-          ? "Начинки"
-          : type === "bun" ? "Булки" : "Соусы"
-        }
-        items={mainItems}
-      />
-    }
+    useEffect(() => {
+        dispatch(fetchIngridients());
+    }, [dispatch]);
 
-  return (
-    <section className={styles.burger}>
-      <BurgerHeader />
+    const sections = useMemo(
+        () => [
+            { key: "bun", title: "Булки" },
+            { key: "sauce", title: "Соусы" },
+            { key: "main", title: "Начинки" },
+        ],
+        []
+    );
 
-      <section className={styles.burger__left}>
-        {filterItems(data, "bun")}
-        {filterItems(data, "sauce")}
-        {filterItems(data, "main")}
-      </section>
-    </section>
-  )
+    return (
+        <section className={s.burger}>
+            <BurgerHeader />
+
+            <section className={s.burger__left}>
+                {sections.map((section) => {
+                    const filtered = ingridients.filter((item) => item.type === section.key);
+                    return <ListIngridient key={section.key} title={section.title} items={filtered} />;
+                })}
+            </section>
+        </section>
+    );
 }
