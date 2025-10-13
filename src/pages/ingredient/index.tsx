@@ -1,16 +1,19 @@
+// src/pages/ingredient/index.tsx
 import React from "react";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import IngredientDetails from "../../components/ingredient-details/ingredient-details";
-import { useAppDispatch, useAppSelector } from "../../services/store";
-import type { Ingridient } from "../../types/types";
-import { fetchIngridients } from "../../services/ingridients/ingridientsSlice";
+import {useAppDispatch, useAppSelector} from "../../services/store";
+import type {Ingridient} from "../../types/types";
+import {fetchIngridients} from "../../services/ingridients/ingridientsSlice";
 import styles from "./IngredientPage.module.css";
 
-export default function Ingredient() {
-    const { id } = useParams<{ id: string }>();
+type Props = { inModal?: boolean };
+
+export default function Ingredient({inModal = false}: Props) {
+    const {id} = useParams<{ id: string }>();
     const dispatch = useAppDispatch();
 
-    const { ingridients, ingridientsRequest, ingridientsFailed } = useAppSelector(
+    const {ingridients, ingridientsRequest, ingridientsFailed} = useAppSelector(
         (s) => s.ingridients
     );
 
@@ -27,19 +30,11 @@ export default function Ingredient() {
     );
 
     if (ingridientsFailed) {
-        return (
-            <div className={styles.status}>
-                Ошибка загрузки ингредиентов.
-            </div>
-        );
+        return <div className={styles.status}>Ошибка загрузки ингредиентов.</div>;
     }
 
     if (ingridientsRequest || !ingridients?.length) {
-        return (
-            <div className={styles.status}>
-                Загружаем ингредиенты…
-            </div>
-        );
+        return <div className={styles.status}>Загружаем ингредиенты…</div>;
     }
 
     if (!ingredient) {
@@ -50,12 +45,11 @@ export default function Ingredient() {
         );
     }
 
-    const { name, image, calories, proteins, fat, carbohydrates } = ingredient;
+    const {name, image, calories, proteins, fat, carbohydrates} = ingredient;
 
     return (
         <main className={styles.container}>
-            <h1 className={styles.title}>Детали ингредиента</h1>
-
+            {!inModal && <h1 className={styles.title}>Детали ингредиента</h1>}
             <section className={styles.content}>
                 <IngredientDetails
                     name={name}

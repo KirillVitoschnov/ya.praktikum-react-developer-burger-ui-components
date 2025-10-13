@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { request } from "../../utils/request";
 import type { RootStore } from "../store";
+import { API_BASE_URL } from '../../constants/api';
 
 const ACCESS_TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";
@@ -65,7 +66,7 @@ const initialState: AuthState = {
 };
 
 export const loginApi = async (email: string, password: string): Promise<LoginResponse> =>
-    request<LoginResponse>("https://norma.nomoreparties.space/api/auth/login", {
+    request<LoginResponse>(`${API_BASE_URL}auth/login`, {
         method: "POST",
         body: JSON.stringify({ email, password }),
         headers: { "Content-Type": "application/json" },
@@ -76,28 +77,28 @@ export const registerApi = async (
     email: string,
     password: string
 ): Promise<RegisterResponse> =>
-    request<RegisterResponse>("https://norma.nomoreparties.space/api/auth/register", {
+    request<RegisterResponse>(`${API_BASE_URL}auth/register`, {
         method: "POST",
         body: JSON.stringify({ name, email, password }),
         headers: { "Content-Type": "application/json" },
     });
 
 export const refreshTokenApi = async (refreshToken: string): Promise<RefreshResponse> =>
-    request<RefreshResponse>("https://norma.nomoreparties.space/api/auth/token", {
+    request<RefreshResponse>(`${API_BASE_URL}auth/token`, {
         method: "POST",
         body: JSON.stringify({ token: refreshToken }),
         headers: { "Content-Type": "application/json" },
     });
 
 export const logoutApi = async (refreshToken: string): Promise<LogoutResponse> =>
-    request<LogoutResponse>("https://norma.nomoreparties.space/api/auth/logout", {
+    request<LogoutResponse>(`${API_BASE_URL}auth/logout`, {
         method: "POST",
         body: JSON.stringify({ token: refreshToken }),
         headers: { "Content-Type": "application/json" },
     });
 
 export const getUserApi = async (accessToken: string): Promise<GetUserResponse> =>
-    request<GetUserResponse>("https://norma.nomoreparties.space/api/auth/user", {
+    request<GetUserResponse>(`${API_BASE_URL}auth/user`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -109,7 +110,7 @@ export const updateUserApi = async (
     accessToken: string,
     data: Partial<{ name: string; email: string; password: string }>
 ): Promise<UpdateUserResponse> =>
-    request<UpdateUserResponse>("https://norma.nomoreparties.space/api/auth/user", {
+    request<UpdateUserResponse>(`${API_BASE_URL}auth/user`, {
         method: "PATCH",
         body: JSON.stringify(data),
         headers: {

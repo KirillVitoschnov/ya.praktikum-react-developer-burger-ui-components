@@ -1,8 +1,9 @@
 import React from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { EmailInput, Button } from "@ya.praktikum/react-developer-burger-ui-components";
+import {Link, useNavigate, useLocation} from "react-router-dom";
+import {EmailInput, Button} from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./ForgotPasswordPage.module.css";
-import { request } from "../../utils/request";
+import {request} from "../../utils/request";
+import {API_BASE_URL} from '../../constants/api';
 
 type ForgotResponse = {
     success: boolean;
@@ -27,22 +28,19 @@ export default function ForgotPasswordPage() {
         setError(null);
         setLoading(true);
         try {
-            const res = await request<ForgotResponse>(
-                "https://norma.nomoreparties.space/api/password-reset",
+            await request<ForgotResponse>(
+                `${API_BASE_URL}password-reset`,
                 {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email }),
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({email}),
                 }
             );
 
-            if (!res?.success) {
-                throw new Error(res?.message || "Не удалось отправить письмо");
-            }
 
             navigate("/reset-password", {
                 replace: true,
-                state: { fromForgot: true, prev: location.pathname, emailUsed: email },
+                state: {fromForgot: true, prev: location.pathname, emailUsed: email},
             });
         } catch (err: any) {
             setError(err?.message || "Не удалось отправить письмо для восстановления");

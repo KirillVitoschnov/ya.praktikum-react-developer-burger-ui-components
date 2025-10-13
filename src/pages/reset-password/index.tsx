@@ -1,8 +1,9 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { PasswordInput, Input as BurgerInput, Button } from "@ya.praktikum/react-developer-burger-ui-components";
+import {Link, useNavigate} from "react-router-dom";
+import {PasswordInput, Input as BurgerInput, Button} from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./ResetPasswordPage.module.css";
-import { request } from "../../utils/request";
+import {request} from "../../utils/request";
+import {API_BASE_URL} from '../../constants/api';
 
 type ResetResponse = {
     success: boolean;
@@ -13,7 +14,7 @@ export default function ResetPasswordPage() {
     const [password, setPassword] = React.useState<string>("");
     const [token, setToken] = React.useState<string>("");
 
-    const [touched, setTouched] = React.useState({ password: false, token: false });
+    const [touched, setTouched] = React.useState({password: false, token: false});
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
 
@@ -30,20 +31,17 @@ export default function ResetPasswordPage() {
         setError(null);
         setLoading(true);
         try {
-            const res = await request<ResetResponse>(
-                "https://norma.nomoreparties.space/api/password-reset/reset",
+            await request<ResetResponse>(
+                `${API_BASE_URL}password-reset/reset`,
                 {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ password, token: token.trim() }),
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({password, token: token.trim()}),
                 }
             );
 
-            if (!res?.success) {
-                throw new Error(res?.message || "Не удалось обновить пароль");
-            }
 
-            navigate("/login", { replace: true });
+            navigate("/login", {replace: true});
         } catch (err: any) {
             setError(err?.message || "Не удалось обновить пароль. Проверьте код и попробуйте снова.");
         } finally {
@@ -51,7 +49,8 @@ export default function ResetPasswordPage() {
         }
     };
 
-    const noop = () => {};
+    const noop = () => {
+    };
 
     return (
         <div className={styles.page}>
@@ -80,7 +79,7 @@ export default function ResetPasswordPage() {
                         placeholder="Введите код из письма"
                         value={token}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setToken(e.target.value)}
-                        onBlur={() => setTouched((s) => ({ ...s, token: true }))}
+                        onBlur={() => setTouched((s) => ({...s, token: true}))}
                         autoComplete="one-time-code"
                         spellCheck={false}
                         onPointerEnterCapture={noop}
