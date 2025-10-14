@@ -6,6 +6,7 @@ import {
     useLocation,
     useNavigate,
     Location,
+    Navigate,
 } from "react-router-dom";
 
 import Header from "../header/header";
@@ -18,6 +19,9 @@ import ProfilePage from "../../pages/profile";
 import Ingredient from "../../pages/ingredient";
 import ProtectedRouteElement from "../protecred-route/ProtectedRouteElement";
 import Modal from "../modal/modal";
+import { useAppDispatch } from "../../services/store";
+import { fetchIngridients } from "../../services/ingridients/ingridientsSlice";
+import OrdersPage from "../../pages/profile/orders";
 
 function IngredientModalRoute() {
     const navigate = useNavigate();
@@ -31,7 +35,7 @@ function IngredientModalRoute() {
 
 function AppRoutes() {
     const location = useLocation();
-    const state = location.state as { background?: Location } | undefined;
+    const state = location.state as { background?: Location; fromForgotPassword?: boolean } | undefined;
     const background = state?.background;
 
     return (
@@ -41,9 +45,13 @@ function AppRoutes() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route
+                    path="/reset-password"
+                    element={state?.fromForgotPassword ? <ResetPasswordPage /> : <Navigate to="/forgot-password" replace />}
+                />
                 <Route element={<ProtectedRouteElement />}>
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/profile/orders" element={<OrdersPage />} />
                 </Route>
                 <Route path="/ingredients/:id" element={<Ingredient />} />
             </Routes>
@@ -58,6 +66,11 @@ function AppRoutes() {
 }
 
 export default function App() {
+    const dispatch = useAppDispatch();
+    React.useEffect(() => {
+        dispatch(fetchIngridients());
+    }, [dispatch]);
+
     return (
         <div className="App">
             <BrowserRouter>

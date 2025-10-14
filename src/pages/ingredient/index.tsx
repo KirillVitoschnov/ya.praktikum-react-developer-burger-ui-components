@@ -1,10 +1,8 @@
-// src/pages/ingredient/index.tsx
 import React from "react";
 import {useParams} from "react-router-dom";
 import IngredientDetails from "../../components/ingredient-details/ingredient-details";
 import {useAppDispatch, useAppSelector} from "../../services/store";
 import type {Ingridient} from "../../types/types";
-import {fetchIngridients} from "../../services/ingridients/ingridientsSlice";
 import styles from "./IngredientPage.module.css";
 
 type Props = { inModal?: boolean };
@@ -16,13 +14,6 @@ export default function Ingredient({inModal = false}: Props) {
     const {ingridients, ingridientsRequest, ingridientsFailed} = useAppSelector(
         (s) => s.ingridients
     );
-
-    const loadedRef = React.useRef(false);
-    React.useEffect(() => {
-        if (loadedRef.current) return;
-        loadedRef.current = true;
-        dispatch<any>(fetchIngridients());
-    }, [dispatch]);
 
     const ingredient: Ingridient | undefined = React.useMemo(
         () => ingridients?.find((x) => x._id === id),

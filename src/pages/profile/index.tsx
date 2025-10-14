@@ -110,8 +110,17 @@ export default function ProfilePage() {
                     >
                         Профиль
                     </NavLink>
+                    <NavLink
+                        to="/profile/orders"
+                        end
+                        className={({ isActive }) =>
+                            `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
+                        }
+                    >
+                        История заказов
+                    </NavLink>
 
-                    <span className={`${styles.navLink} ${styles.navLinkDisabled}`}>История заказов</span>
+
 
                     <button
                         type="button"

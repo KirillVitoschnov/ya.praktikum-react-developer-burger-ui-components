@@ -5,6 +5,7 @@ import styles from "./LoginPage.module.css";
 
 import { useAppDispatch, useAppSelector } from "../../services/store";
 import { login, selectAuthStatus, selectAuthError } from "../../services/auth/authSlice";
+import { useForm } from "../../hooks/useForm";
 
 type SubmitFn = (email: string, password: string) => Promise<void> | void;
 
@@ -14,8 +15,7 @@ interface LoginPageProps {
 }
 
 export default function LoginPage({ onSubmit, isSubmitting }: LoginPageProps) {
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
+    const { values, handleChange } = useForm({ email: "", password: "" });
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,7 +26,7 @@ export default function LoginPage({ onSubmit, isSubmitting }: LoginPageProps) {
     const authError = useAppSelector(selectAuthError);
 
     const loading = typeof isSubmitting === "boolean" ? isSubmitting : authStatus === "loading";
-    const canSubmit = /\S+@\S+\.\S+/.test(email) && password.length >= 6 && !loading;
+    const canSubmit = /\S+@\S+\.\S+/.test(values.email) && values.password.length >= 6 && !loading;
 
     const defaultSubmit: SubmitFn = async (mail, pass) => {
         await dispatch(login({ email: mail, password: pass })).unwrap();
@@ -37,7 +37,7 @@ export default function LoginPage({ onSubmit, isSubmitting }: LoginPageProps) {
         if (!canSubmit) return;
         try {
             const submitFn = onSubmit ?? defaultSubmit;
-            await submitFn(email, password);
+            await submitFn(values.email, values.password);
             navigate(from, { replace: true });
         } catch (err) {
             console.error(err);
@@ -55,8 +55,8 @@ export default function LoginPage({ onSubmit, isSubmitting }: LoginPageProps) {
                     <EmailInput
                         name="email"
                         placeholder="E-mail"
-                        value={email}
-                        onChange={(e) => setEmail((e as any).target?.value ?? "")}
+                        value={values.email}
+                        onChange={handleChange}
                         isIcon={false}
                     />
                 </div>
@@ -64,8 +64,8 @@ export default function LoginPage({ onSubmit, isSubmitting }: LoginPageProps) {
                 <div className={styles.field}>
                     <PasswordInput
                         name="password"
-                        value={password}
-                        onChange={(e) => setPassword((e as any).target?.value ?? "")}
+                        value={values.password}
+                        onChange={handleChange}
                     />
                 </div>
 
