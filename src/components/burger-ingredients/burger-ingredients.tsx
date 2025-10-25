@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAppSelector } from "../../services/store";
 import BurgerHeader from "../burger-header/burger-header";
 import ListIngridient from "../list-ingridient/list-ingridient";

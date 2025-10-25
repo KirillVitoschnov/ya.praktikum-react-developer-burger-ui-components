@@ -1,7 +1,7 @@
 import React from "react";
 import {useParams} from "react-router-dom";
 import IngredientDetails from "../../components/ingredient-details/ingredient-details";
-import {useAppDispatch, useAppSelector} from "../../services/store";
+import { useAppSelector} from "../../services/store";
 import type {Ingridient} from "../../types/types";
 import styles from "./IngredientPage.module.css";
 
@@ -9,7 +9,6 @@ type Props = { inModal?: boolean };
 
 export default function Ingredient({inModal = false}: Props) {
     const {id} = useParams<{ id: string }>();
-    const dispatch = useAppDispatch();
 
     const {ingridients, ingridientsRequest, ingridientsFailed} = useAppSelector(
         (s) => s.ingridients

@@ -66,58 +66,58 @@ const initialState: AuthState = {
 };
 
 export const loginApi = async (email: string, password: string): Promise<LoginResponse> =>
-    request<LoginResponse>(`${API_BASE_URL}auth/login`, {
+    request(`${API_BASE_URL}auth/login`, {
         method: "POST",
         body: JSON.stringify({ email, password }),
         headers: { "Content-Type": "application/json" },
-    });
+    }) as Promise<LoginResponse>;
 
 export const registerApi = async (
     name: string,
     email: string,
     password: string
 ): Promise<RegisterResponse> =>
-    request<RegisterResponse>(`${API_BASE_URL}auth/register`, {
+    request(`${API_BASE_URL}auth/register`, {
         method: "POST",
         body: JSON.stringify({ name, email, password }),
         headers: { "Content-Type": "application/json" },
-    });
+    }) as Promise<RegisterResponse>;
 
 export const refreshTokenApi = async (refreshToken: string): Promise<RefreshResponse> =>
-    request<RefreshResponse>(`${API_BASE_URL}auth/token`, {
+    request(`${API_BASE_URL}auth/token`, {
         method: "POST",
         body: JSON.stringify({ token: refreshToken }),
         headers: { "Content-Type": "application/json" },
-    });
+    }) as Promise<RefreshResponse>;
 
 export const logoutApi = async (refreshToken: string): Promise<LogoutResponse> =>
-    request<LogoutResponse>(`${API_BASE_URL}auth/logout`, {
+    request(`${API_BASE_URL}auth/logout`, {
         method: "POST",
         body: JSON.stringify({ token: refreshToken }),
         headers: { "Content-Type": "application/json" },
-    });
+    }) as Promise<LogoutResponse>;
 
 export const getUserApi = async (accessToken: string): Promise<GetUserResponse> =>
-    request<GetUserResponse>(`${API_BASE_URL}auth/user`, {
+    request(`${API_BASE_URL}auth/user`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
             authorization: `Bearer ${accessToken}`,
         },
-    });
+    }) as Promise<GetUserResponse>;
 
 export const updateUserApi = async (
     accessToken: string,
     data: Partial<{ name: string; email: string; password: string }>
 ): Promise<UpdateUserResponse> =>
-    request<UpdateUserResponse>(`${API_BASE_URL}auth/user`, {
+    request(`${API_BASE_URL}auth/user`, {
         method: "PATCH",
         body: JSON.stringify(data),
         headers: {
             "Content-Type": "application/json",
             authorization: `Bearer ${accessToken}`,
         },
-    });
+    }) as Promise<UpdateUserResponse>;
 
 const getAccess = (state: RootStore) =>
     state.auth.accessToken ?? localStorage.getItem(ACCESS_TOKEN_KEY) ?? null;
@@ -133,8 +133,9 @@ export const login = createAsyncThunk<
         localStorage.setItem(ACCESS_TOKEN_KEY, access);
         localStorage.setItem(REFRESH_TOKEN_KEY, res.refreshToken);
         return { user: res.user, accessToken: access };
-    } catch (e: any) {
-        return rejectWithValue(e?.message || "Ошибка авторизации");
+    } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : "Ошибка авторизации";
+        return rejectWithValue(message);
     }
 });
 
@@ -149,8 +150,9 @@ export const registerUser = createAsyncThunk<
         localStorage.setItem(ACCESS_TOKEN_KEY, access);
         localStorage.setItem(REFRESH_TOKEN_KEY, res.refreshToken);
         return { user: res.user, accessToken: access };
-    } catch (e: any) {
-        return rejectWithValue(e?.message || "Ошибка регистрации");
+    } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : "Ошибка регистрации";
+        return rejectWithValue(message);
     }
 });
 
@@ -165,8 +167,9 @@ export const refreshAccessToken = createAsyncThunk<string, void, { rejectValue: 
             localStorage.setItem(ACCESS_TOKEN_KEY, access);
             localStorage.setItem(REFRESH_TOKEN_KEY, res.refreshToken);
             return access;
-        } catch (e: any) {
-            return rejectWithValue(e?.message || "Ошибка обновления токена");
+        } catch (e: unknown) {
+            const message = e instanceof Error ? e.message : "Ошибка обновления токена";
+            return rejectWithValue(message);
         }
     }
 );
@@ -178,8 +181,9 @@ export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
         try {
             if (!refresh) throw new Error("Нет refresh токена");
             await logoutApi(refresh);
-        } catch (e: any) {
-            return rejectWithValue(e?.message || "Ошибка выхода");
+        } catch (e: unknown) {
+            const message = e instanceof Error ? e.message : "Ошибка выхода";
+            return rejectWithValue(message);
         } finally {
             localStorage.removeItem(ACCESS_TOKEN_KEY);
             localStorage.removeItem(REFRESH_TOKEN_KEY);
@@ -198,13 +202,14 @@ export const fetchCurrentUser = createAsyncThunk<
     try {
         const res = await getUserApi(access);
         return res.user;
-    } catch (e: any) {
+    } catch (e: unknown) {
         try {
             access = await dispatch(refreshAccessToken()).unwrap();
             const res = await getUserApi(access);
             return res.user;
-        } catch (err: any) {
-            return rejectWithValue(err?.message || "Не удалось получить пользователя");
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Не удалось получить пользователя";
+            return rejectWithValue(message);
         }
     }
 });
@@ -220,13 +225,14 @@ export const updateCurrentUser = createAsyncThunk<
     try {
         const res = await updateUserApi(access, payload);
         return res.user;
-    } catch (e: any) {
+    } catch (e: unknown) {
         try {
             access = await dispatch(refreshAccessToken()).unwrap();
             const res = await updateUserApi(access, payload);
             return res.user;
-        } catch (err: any) {
-            return rejectWithValue(err?.message || "Не удалось обновить пользователя");
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Не удалось обновить пользователя";
+            return rejectWithValue(message);
         }
     }
 });

@@ -28,22 +28,23 @@ export default function ForgotPasswordPage() {
         setError(null);
         setLoading(true);
         try {
-            await request<ForgotResponse>(
+            await request(
                 `${API_BASE_URL}password-reset`,
                 {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({email}),
                 }
-            );
+            ) as ForgotResponse;
 
 
             navigate("/reset-password", {
                 replace: true,
                 state: {fromForgot: true, prev: location.pathname, emailUsed: email},
             });
-        } catch (err: any) {
-            setError(err?.message || "Не удалось отправить письмо для восстановления");
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Не удалось отправить письмо для восстановления";
+            setError(message);
         } finally {
             setLoading(false);
         }

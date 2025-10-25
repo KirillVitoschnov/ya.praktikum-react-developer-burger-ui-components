@@ -39,7 +39,7 @@ export default function Card({ingridient}: Props) {
             to={`/ingredients/${_id}`}
             state={{background: location}}
             className={s.card}
-            ref={dragRef as any}
+            ref={dragRef as React.Ref<HTMLAnchorElement>}
         >
             {counter ? <Counter count={counter} size="default" extraClass="m-1"/> : null}
             <img className={`${s.card__img} mb-1`} src={ingridient.image} alt={ingridient.name}/>
