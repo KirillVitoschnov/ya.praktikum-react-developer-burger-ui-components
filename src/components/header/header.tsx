@@ -1,45 +1,54 @@
+import { Link, NavLink } from "react-router-dom";
 import { Logo, BurgerIcon, ListIcon, ProfileIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import s from "./header.module.css";
 
 export default function Header() {
-    const menuItems = [
-        {
-            id: 1,
-            icon: <BurgerIcon type="primary" />,
-            text: "Конструктор",
-            textClass: "text text_type_main-small",
-            isActive: true,
-        },
-        {
-            id: 2,
-            icon: <ListIcon type="secondary" />,
-            text: "Лента заказов",
-            textClass: "text text_type_main-default text_color_inactive",
-            isActive: false,
-        },
-    ];
-
-    const profileItem = {
-        icon: <ProfileIcon type="secondary" />,
-        text: "Личный кабинет",
-        textClass: "text text_type_main-default text_color_inactive",
-    };
-
     return (
         <header className={s.header}>
             <div className={s.burgerConstructor}>
                 <ul className={s.icons}>
-                    {menuItems.map(({ id, icon, text, textClass }) => (
-                        <li key={id} className={s.iconBox}>
-                            {icon}
-                            <p className={`${s.text} ${textClass}`}>{text}</p>
-                        </li>
-                    ))}
+                    <li className={s.iconBox}>
+                        <NavLink to="/" className={({ isActive }) => s.link}>
+                            {({ isActive }) => (
+                                <>
+                                    <BurgerIcon type={isActive ? "primary" : "secondary"} />
+                                    <p className={`${s.text} text text_type_main-small ${isActive ? "" : "text_color_inactive"}`}>
+                                        Конструктор
+                                    </p>
+                                </>
+                            )}
+                        </NavLink>
+                    </li>
+
+                    <li className={s.iconBox}>
+                        <NavLink to="/profile/orders" className={({ isActive }) => s.link}>
+                            {({ isActive }) => (
+                                <>
+                                    <ListIcon type={isActive ? "primary" : "secondary"} />
+                                    <p className={`${s.text} text text_type_main-default ${isActive ? "" : "text_color_inactive"}`}>
+                                        Лента заказов
+                                    </p>
+                                </>
+                            )}
+                        </NavLink>
+                    </li>
                 </ul>
-                <Logo />
+
+                <Link to="/" className={s.logoLink}>
+                    <Logo />
+                </Link>
+
                 <div className={`${s.iconBox} ${s.profile}`}>
-                    {profileItem.icon}
-                    <p className={`${s.text} ${profileItem.textClass}`}>{profileItem.text}</p>
+                    <NavLink to="/profile" className={({ isActive }) => s.link}>
+                        {({ isActive }) => (
+                            <>
+                                <ProfileIcon type={isActive ? "primary" : "secondary"} />
+                                <p className={`${s.text} text text_type_main-default ${isActive ? "" : "text_color_inactive"}`}>
+                                    Личный кабинет
+                                </p>
+                            </>
+                        )}
+                    </NavLink>
                 </div>
             </div>
         </header>

@@ -1,6 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {InitialStateIngridients} from "../../types/types";
 import {getIngridients} from "../API";
+import { AppDispatch } from "../store";
 
 const initialState: InitialStateIngridients = {
     ingridients: [],
@@ -20,10 +21,10 @@ const ingridientsSlice = createSlice({
 
 export const {setIngridients} = ingridientsSlice.actions;
 
-export const fetchIngridients = () => async (dispatch: any) => {
+export const fetchIngridients = () => async (dispatch: AppDispatch) => {
     try {
-        const ingridients = await getIngridients()
-        dispatch(setIngridients(ingridients))
+        const ingridients = await getIngridients();
+        dispatch(setIngridients(ingridients));
     } catch (err) {
         console.log(err);
     }

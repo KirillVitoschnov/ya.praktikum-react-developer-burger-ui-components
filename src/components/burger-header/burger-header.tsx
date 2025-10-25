@@ -1,10 +1,12 @@
-import { useState } from "react";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import s from "./burger-header.module.css";
 
-export default function BurgerHeader() {
-    const [activeTab, setActiveTab] = useState("Булки");
+interface BurgerHeaderProps {
+    activeTab: string;
+    setActiveTab: (tab: string) => void;
+}
 
+export default function BurgerHeader({ activeTab, setActiveTab }: BurgerHeaderProps) {
     const tabs = [
         { value: "Булки", label: "Булки" },
         { value: "Соусы", label: "Соусы" },
@@ -14,7 +16,6 @@ export default function BurgerHeader() {
     return (
         <div className={s.header}>
             <h1 className="mt-10 mb-5 text text_type_main-large">Соберите бургер</h1>
-
             <ul className={`${s.header__menu} mb-10`}>
                 {tabs.map((tab) => (
                     <Tab
