@@ -1,63 +1,53 @@
-import { Counter, CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
+import {Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import s from "./card-ingridient.module.css";
-import Modal from "../modal/modal";
-import IngredientDetails from "../ingredient-details/ingredient-details";
-import { useModal } from "../../hooks/useModal";
+import {useEffect, useState} from "react";
+import {Ingridient} from "../../types/types";
+import {useDrag} from "react-dnd";
+import {useAppSelector} from "../../services/store";
+import {Link, useLocation} from "react-router-dom";
 
 interface Props {
-    counter: number;
-    _id: string;
-    name: string;
-    type: string;
-    proteins: number;
-    fat: number;
-    carbohydrates: number;
-    calories: number;
-    price: number;
-    image: string;
-    image_mobile: string;
-    image_large: string;
-    __v: number;
+    ingridient: Ingridient;
 }
 
-export default function Card({
-                                 counter,
-                                 image,
-                                 price,
-                                 name,
-                                 proteins,
-                                 fat,
-                                 carbohydrates,
-                                 calories,
-                             }: Props) {
-    const { isOpen, open, close } = useModal();
+export default function Card({ingridient}: Props) {
+    const [counter, setCounter] = useState(0);
+    const { type, _id} = ingridient;
+
+    const location = useLocation();
+    const {constructorItems, bun} = useAppSelector((store) => store.constructorItems);
+
+    const [, dragRef] = useDrag({
+        type: type,
+        item: {ingridient},
+        collect: (monitor) => ({
+            isDrag: monitor.isDragging(),
+        }),
+    });
+
+    useEffect(() => {
+        if (type === "bun") {
+            bun?._id === _id ? setCounter(2) : setCounter(0);
+        } else if (constructorItems.find((item) => item._id === _id)) {
+            const count = constructorItems.filter((item) => item._id === _id);
+            count && setCounter(count.length);
+        } else setCounter(0);
+    }, [constructorItems, _id, type, bun?._id]);
 
     return (
-        <>
-            <div className={s.card} onClick={open} tabIndex={0} role="button">
-                <Counter count={counter} size="default" extraClass="m-1" />
-                <img className={`${s.card__img} mb-1`} src={image} alt={name} />
-                <div className={s.card__price}>
-                    <span className="text text_type_digits-default mr-2">{price}</span>
-                    <CurrencyIcon type="primary" />
-                </div>
-                <p className={`text text_type_main-small mt-2 ${s.card__description}`}>
-                    {name}
-                </p>
+        <Link
+            to={`/ingredients/${_id}`}
+            state={{background: location}}
+            className={s.card}
+            ref={dragRef as any}
+        >
+            {counter ? <Counter count={counter} size="default" extraClass="m-1"/> : null}
+            <img className={`${s.card__img} mb-1`} src={ingridient.image} alt={ingridient.name}/>
+            <div className={`${s.card__price}`}>
+                <span className="text text_type_digits-default mr-2">{ingridient.price}</span>
+                <CurrencyIcon type="primary"/>
             </div>
-
-            {isOpen && (
-                <Modal close={close} title="Детали ингредиента">
-                    <IngredientDetails
-                        carbohydrates={carbohydrates}
-                        calories={calories}
-                        proteins={proteins}
-                        fat={fat}
-                        image={image}
-                        name={name}
-                    />
-                </Modal>
-            )}
-        </>
+            <p className={`text text_type_main-small mt-2 ${s.card__description}`}>{ingridient.name}</p>
+        </Link>
     );
 }

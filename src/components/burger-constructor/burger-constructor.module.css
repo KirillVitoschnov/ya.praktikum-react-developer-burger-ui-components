@@ -1,26 +1,21 @@
-.root {
+.main {
     width: 600px;
     display: flex;
     flex-direction: column;
-    row-gap: 16px;
+    gap: 16px;
 }
 
-.stack {
+.main__container {
     display: flex;
     flex-direction: column;
-    row-gap: 16px;
+    gap: 16px;
     width: 600px;
-    max-height: 80vh;
+    height: 80vh;
     overflow: auto;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    box-sizing: border-box;
 }
 
-.footer {
-    display: flex;
-}
-
-.cell {
-    min-width: 0;
+.main__container_green {
+    border: 1px solid #029202;
+    border-radius: 20px;
 }

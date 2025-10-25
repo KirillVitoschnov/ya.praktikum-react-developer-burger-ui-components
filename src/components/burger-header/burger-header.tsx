@@ -1,37 +1,33 @@
-import { useState, useCallback } from "react";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import s from "./burger-header.module.css";
 
-type TabOption = "Булки" | "Соусы" | "Начинки";
+interface BurgerHeaderProps {
+    activeTab: string;
+    setActiveTab: (tab: string) => void;
+}
 
-export default function BurgerHeader() {
-    const [activeTab, setActiveTab] = useState<TabOption>("Булки");
-
-    const handleTabChange = useCallback((value: TabOption) => {
-        setActiveTab(value);
-    }, []);
-
-    const tabs: TabOption[] = ["Булки", "Соусы", "Начинки"];
+export default function BurgerHeader({ activeTab, setActiveTab }: BurgerHeaderProps) {
+    const tabs = [
+        { value: "Булки", label: "Булки" },
+        { value: "Соусы", label: "Соусы" },
+        { value: "Начинки", label: "Начинки" },
+    ];
 
     return (
-        <header className={s.container}>
+        <div className={s.header}>
             <h1 className="mt-10 mb-5 text text_type_main-large">Соберите бургер</h1>
-
-            <nav className="mb-10" aria-label="Навигация по категориям ингредиентов">
-                <ul className={s.menu} role="tablist">
-                    {tabs.map((tab) => (
-                        <li key={tab} className={s.menuItem}>
-                            <Tab
-                                value={tab}
-                                active={activeTab === tab}
-                                onClick={() => handleTabChange(tab)}
-                            >
-                                {tab}
-                            </Tab>
-                        </li>
-                    ))}
-                </ul>
-            </nav>
-        </header>
+            <ul className={`${s.header__menu} mb-10`}>
+                {tabs.map((tab) => (
+                    <Tab
+                        key={tab.value}
+                        value={tab.value}
+                        active={activeTab === tab.value}
+                        onClick={setActiveTab}
+                    >
+                        {tab.label}
+                    </Tab>
+                ))}
+            </ul>
+        </div>
     );
 }

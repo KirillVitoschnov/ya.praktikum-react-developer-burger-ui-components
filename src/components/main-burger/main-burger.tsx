@@ -1,16 +1,16 @@
+import {DndProvider} from "react-dnd";
+import {HTML5Backend} from "react-dnd-html5-backend";
 import BurgerConstructor from "../burger-constructor/burger-constructor"
 import BurgerIngridients from "../burger-ingredients/burger-ingredients"
 import s from "./main-burger.module.css"
 
-interface Props {
-  data: never[]
-}
-
-export default function MainBurger({ data }: Props) {
-  return (
-    <main className={s.main}>
-      <BurgerIngridients data={data} />
-      <BurgerConstructor data={data} />
-    </main>
-  )
+export default function MainBurger() {
+    return (
+        <main className={s.main}>
+            <DndProvider backend={HTML5Backend}>
+                <BurgerIngridients/>
+                <BurgerConstructor/>
+            </DndProvider>
+        </main>
+    )
 }

@@ -1,4 +1,8 @@
 #root {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
+}
+
+* {
+    font-family: 'Jet Brains Mono';
 }
