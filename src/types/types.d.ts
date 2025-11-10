@@ -36,3 +36,8 @@ export type InitialStateOrderCost = {
     orderCost: number;
 };
 
+export type IngredientsPayload = { data: Ingridient[] };
+export type CreateOrderPayload = {
+    name: string;
+    order: { number: number };
+};

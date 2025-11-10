@@ -31,19 +31,20 @@ export default function ResetPasswordPage() {
         setError(null);
         setLoading(true);
         try {
-            await request<ResetResponse>(
+            await request(
                 `${API_BASE_URL}password-reset/reset`,
                 {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({password, token: token.trim()}),
                 }
-            );
+            ) as ResetResponse;
 
 
             navigate("/login", {replace: true});
-        } catch (err: any) {
-            setError(err?.message || "Не удалось обновить пароль. Проверьте код и попробуйте снова.");
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Не удалось обновить пароль. Проверьте код и попробуйте снова.";
+            setError(message);
         } finally {
             setLoading(false);
         }
@@ -63,7 +64,7 @@ export default function ResetPasswordPage() {
                     <PasswordInput
                         name="password"
                         value={password}
-                        onChange={(e) => setPassword((e as any).target?.value ?? "")}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                         placeholder="Введите новый пароль"
                         autoComplete="new-password"
                     />
