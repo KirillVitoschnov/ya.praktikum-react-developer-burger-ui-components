@@ -1,35 +1,9 @@
-.page {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 32px;
-    padding: 40px 24px;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 16px;
-    padding-right: 16px;
-    min-height: 100vh;
-}
-
-.ordersContent {
-    flex: 1;
-    padding-top: 40px;
-}
-
-.ordersList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
 .orderCard {
     background: #1c1c21;
     border-radius: 40px;
     padding: 24px;
     transition: transform 0.2s;
+    margin-bottom: 16px;
 }
 
 .orderCard:hover {
@@ -87,6 +61,16 @@
     gap: -12px;
 }
 
+.ingredientIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #222;
+    background: #222;
+    margin-right: -12px;
+}
+
 .orderPrice {
     display: flex;
     align-items: center;
@@ -104,3 +88,4 @@
 .currencyIcon {
     font-size: 24px;
 }
+

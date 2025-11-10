@@ -2,6 +2,7 @@
     display: flex;
     align-items: center;
     margin: auto 0 32px auto;
+    margin-left: 16px;
 }
 
 .confirm__img {

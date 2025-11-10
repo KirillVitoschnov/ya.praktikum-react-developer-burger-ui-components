@@ -133,7 +133,7 @@ export default function ProfilePage() {
                 </nav>
 
                 <p className={`${styles.hint} text text_type_main-default text_color_inactive`}>
-                    В этом разделе вы можете изменить свои персональные данные
+                    В этом разделе<br />вы можете изменить свои персональные данные
                 </p>
             </aside>
 

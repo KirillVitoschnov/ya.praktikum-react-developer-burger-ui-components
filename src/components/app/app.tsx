@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     BrowserRouter,
     Routes,
@@ -8,7 +8,6 @@ import {
     Location,
     Navigate,
 } from "react-router-dom";
-
 import Header from "../header/header";
 import MainBurger from "../main-burger/main-burger";
 import LoginPage from "../../pages/login";
@@ -21,7 +20,12 @@ import ProtectedRouteElement from "../protecred-route/ProtectedRouteElement";
 import Modal from "../modal/modal";
 import { useAppDispatch } from "../../services/store";
 import { fetchIngridients } from "../../services/ingridients/ingridientsSlice";
-import OrdersPage from "../../pages/profile/orders";
+import { useOrdersWebSocketUrl } from "../../hooks/useOrdersWebSocketUrl";
+import FeedPage from "../../pages/feed/FeedPage";
+import FeedOrderPage from "../../pages/feed/FeedOrderPage";
+import ProfileOrdersPage from "../../pages/profile/orders/ProfileOrdersPage";
+import ProfileOrderDetailsPage from "../../pages/profile/orders/ProfileOrderDetailsPage";
+import { WS_CONNECT, WS_DISCONNECT } from "../../services/orders/wsTypes";
 
 function IngredientModalRoute() {
     const navigate = useNavigate();
@@ -29,6 +33,26 @@ function IngredientModalRoute() {
     return (
         <Modal close={onClose} title="Детали ингредиента">
             <Ingredient inModal />
+        </Modal>
+    );
+}
+
+function FeedOrderModalRoute() {
+    const navigate = useNavigate();
+    const onClose = () => navigate(-1);
+    return (
+        <Modal close={onClose} title="Детали заказа">
+            <FeedOrderPage inModal />
+        </Modal>
+    );
+}
+
+function ProfileOrderModalRoute() {
+    const navigate = useNavigate();
+    const onClose = () => navigate(-1);
+    return (
+        <Modal close={onClose} title="Детали заказа">
+            <ProfileOrderDetailsPage inModal />
         </Modal>
     );
 }
@@ -49,9 +73,12 @@ function AppRoutes() {
                     path="/reset-password"
                     element={state?.fromForgotPassword ? <ResetPasswordPage /> : <Navigate to="/forgot-password" replace />}
                 />
+                <Route path="/feed" element={<FeedPage />} />
+                <Route path="/feed/:id" element={<FeedOrderPage />} />
                 <Route element={<ProtectedRouteElement />}>
                     <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/profile/orders" element={<OrdersPage />} />
+                    <Route path="/profile/orders" element={<ProfileOrdersPage />} />
+                    <Route path="/profile/orders/:id" element={<ProfileOrderDetailsPage />} />
                 </Route>
                 <Route path="/ingredients/:id" element={<Ingredient />} />
             </Routes>
@@ -59,6 +86,10 @@ function AppRoutes() {
             {background && (
                 <Routes>
                     <Route path="/ingredients/:id" element={<IngredientModalRoute />} />
+                    <Route path="/feed/:id" element={<FeedOrderModalRoute />} />
+                    <Route element={<ProtectedRouteElement />}>
+                        <Route path="/profile/orders/:id" element={<ProfileOrderModalRoute />} />
+                    </Route>
                 </Routes>
             )}
         </>
@@ -67,16 +98,25 @@ function AppRoutes() {
 
 export default function App() {
     const dispatch = useAppDispatch();
-    React.useEffect(() => {
+    const wsUrl = useOrdersWebSocketUrl();
+
+    useEffect(() => {
+        if (wsUrl) {
+            dispatch({ type: WS_CONNECT });
+        }
+        return () => {
+            dispatch({ type: WS_DISCONNECT });
+        };
+    }, [dispatch, wsUrl]);
+
+    useEffect(() => {
         dispatch(fetchIngridients());
     }, [dispatch]);
 
     return (
-        <div className="App">
-            <BrowserRouter>
-                <Header />
-                <AppRoutes />
-            </BrowserRouter>
-        </div>
+        <BrowserRouter>
+            <Header />
+            <AppRoutes />
+        </BrowserRouter>
     );
 }
