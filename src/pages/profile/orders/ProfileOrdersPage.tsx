@@ -1,8 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootStore } from "../../../services/store";
-import { useOrdersWebSocket } from "../../../hooks/useOrdersWebSocket";
-import { useOrdersWebSocketUrl } from "../../../hooks/useOrdersWebSocketUrl";
 import ProfileSidebar from "../../../components/profile-sidebar/ProfileSidebar";
 import OrderCard from '../../../components/order-card/OrderCard';
 import styles from "./OrdersPage.module.css";
@@ -12,11 +10,9 @@ import { useAuthRefresh } from '../../../hooks/useAuthRefresh';
 const ProfileOrdersPage: React.FC = () => {
     const orders = useSelector((state: RootStore) => state.userOrders.orders);
     const allIngredients = useSelector((state: RootStore) => state.ingridients.ingridients);
-    const wsUrl = useOrdersWebSocketUrl();
+    const loading = useSelector((state: RootStore) => state.userOrders.loading);
     const location = useLocation();
-
     useAuthRefresh();
-    useOrdersWebSocket(wsUrl, "user");
 
     return (
         <div className={styles.page}>
@@ -24,8 +20,9 @@ const ProfileOrdersPage: React.FC = () => {
             <div className={styles.ordersContent}>
                 <h2>История заказов</h2>
                 <ul className={styles.ordersList}>
-                    {orders.length === 0 && <li>Нет заказов</li>}
-                    {orders.map(order => (
+                    {loading && <li>Загрузка...</li>}
+                    {!loading && orders.length === 0 && <li>Нет заказов</li>}
+                    {!loading && orders.map(order => (
                         <OrderCard
                             key={order._id || order.number}
                             order={order}

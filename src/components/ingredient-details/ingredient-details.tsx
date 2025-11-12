@@ -1,14 +1,9 @@
+import React from "react";
 import CompoundItemModal from "../../features/compound-item-modal/compound-item-modal";
+import { Ingridient } from "../../types/types";
 import s from "./ingredient-details.module.css";
 
-interface Props {
-    image: string;
-    proteins: number;
-    calories: number;
-    fat: number;
-    carbohydrates: number;
-    name: string;
-}
+interface Props extends Ingridient {}
 
 export default function IngredientDetails({
                                               image,

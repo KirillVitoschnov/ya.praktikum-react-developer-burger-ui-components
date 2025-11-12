@@ -74,7 +74,7 @@
 .orderPrice {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     font-size: 24px;
     line-height: 32px;
     font-weight: 600;
@@ -82,10 +82,12 @@
 }
 
 .priceValue {
-    font-family: 'Iceland', sans-serif;
+    display: flex;
+    align-items: center;
 }
 
 .currencyIcon {
     font-size: 24px;
+    display: flex;
+    align-items: center;
 }
-

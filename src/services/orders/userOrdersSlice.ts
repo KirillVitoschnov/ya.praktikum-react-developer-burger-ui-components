@@ -1,25 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { OrdersState, UserOrdersState } from '../../types/types';
 
-export interface Order {
-  ingredients: string[];
-  _id: string;
-  status: 'created' | 'pending' | 'done';
-  number: number;
-  createdAt: string;
-  updatedAt: string;
-  name: string;
-}
-
-export interface OrdersState {
-  orders: Order[];
-  total: number;
-  totalToday: number;
-}
-
-const initialState: OrdersState = {
+const initialState: UserOrdersState = {
   orders: [],
   total: 0,
   totalToday: 0,
+  loading: false,
 };
 
 export const userOrdersSlice = createSlice({
@@ -31,8 +17,17 @@ export const userOrdersSlice = createSlice({
       state.total = action.payload.total;
       state.totalToday = action.payload.totalToday;
     },
+    setUserOrdersFull(state, action: PayloadAction<UserOrdersState>) {
+      state.orders = action.payload.orders;
+      state.total = action.payload.total;
+      state.totalToday = action.payload.totalToday;
+      state.loading = action.payload.loading;
+    },
+    setUserOrdersLoading(state, action: PayloadAction<boolean>) {
+      state.loading = action.payload;
+    }
   },
 });
 
-export const { setUserOrders } = userOrdersSlice.actions;
+export const { setUserOrders, setUserOrdersFull, setUserOrdersLoading } = userOrdersSlice.actions;
 export default userOrdersSlice.reducer;

@@ -1,8 +1,6 @@
 import React from "react";
 import { useAppSelector } from "../../services/store";
 import { useLocation } from "react-router-dom";
-import { useOrdersWebSocket } from "../../hooks/useOrdersWebSocket";
-import { useOrdersWebSocketUrl } from "../../hooks/useOrdersWebSocketUrl";
 import OrderCard from '../../components/order-card/OrderCard';
 import styles from "./FeedPage.module.css";
 
@@ -20,11 +18,8 @@ const FeedPage: React.FC = () => {
 
     const orders = useAppSelector(state => state.orders.orders);
     const allIngredients = useAppSelector(state => state.ingridients.ingridients);
-    const wsUrl = useOrdersWebSocketUrl();
+    const loading = useAppSelector(state => state.orders.loading);
 
-    useOrdersWebSocket(wsUrl, "public");
-
-    console.log('orders:', orders);
 
     const total = useAppSelector(state => state.orders.total) || 0;
     const totalToday = useAppSelector(state => state.orders.totalToday) || 0;
@@ -39,8 +34,9 @@ const FeedPage: React.FC = () => {
             <div>
                 <h2>Лента заказов</h2>
                 <div className={styles.feedList}>
-                    {orders.length === 0 && <div>Нет заказов</div>}
-                    {orders.map((order: Order) => (
+                    {loading && <div>Загрузка...</div>}
+                    {!loading && orders.length === 0 && <div>Нет заказов</div>}
+                    {!loading && orders.map((order: Order) => (
                         <OrderCard
                             key={order._id || order.number}
                             order={order}

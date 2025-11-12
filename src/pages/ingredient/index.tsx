@@ -35,20 +35,11 @@ export default function Ingredient({inModal = false}: Props) {
         );
     }
 
-    const {name, image, calories, proteins, fat, carbohydrates} = ingredient;
-
     return (
         <main className={styles.container}>
             {!inModal && <h1 className={styles.title}>Детали ингредиента</h1>}
             <section className={styles.content}>
-                <IngredientDetails
-                    name={name}
-                    image={image}
-                    calories={calories}
-                    proteins={proteins}
-                    fat={fat}
-                    carbohydrates={carbohydrates}
-                />
+                <IngredientDetails {...ingredient} />
             </section>
         </main>
     );

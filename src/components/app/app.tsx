@@ -26,6 +26,8 @@ import FeedOrderPage from "../../pages/feed/FeedOrderPage";
 import ProfileOrdersPage from "../../pages/profile/orders/ProfileOrdersPage";
 import ProfileOrderDetailsPage from "../../pages/profile/orders/ProfileOrderDetailsPage";
 import { WS_CONNECT, WS_DISCONNECT } from "../../services/orders/wsTypes";
+import FeedSocketProvider from "../../pages/feed/FeedSocketProvider";
+import ProfileOrdersSocketProvider from "../../pages/profile/orders/ProfileOrdersSocketProvider";
 
 function IngredientModalRoute() {
     const navigate = useNavigate();
@@ -41,7 +43,7 @@ function FeedOrderModalRoute() {
     const navigate = useNavigate();
     const onClose = () => navigate(-1);
     return (
-        <Modal close={onClose} title="Детали заказа">
+        <Modal close={onClose} title="">
             <FeedOrderPage inModal />
         </Modal>
     );
@@ -51,7 +53,7 @@ function ProfileOrderModalRoute() {
     const navigate = useNavigate();
     const onClose = () => navigate(-1);
     return (
-        <Modal close={onClose} title="Детали заказа">
+        <Modal close={onClose} title="">
             <ProfileOrderDetailsPage inModal />
         </Modal>
     );
@@ -64,24 +66,28 @@ function AppRoutes() {
 
     return (
         <>
-            <Routes location={background || location}>
-                <Route path="/" element={<MainBurger />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                <Route
-                    path="/reset-password"
-                    element={state?.fromForgotPassword ? <ResetPasswordPage /> : <Navigate to="/forgot-password" replace />}
-                />
-                <Route path="/feed" element={<FeedPage />} />
-                <Route path="/feed/:id" element={<FeedOrderPage />} />
-                <Route element={<ProtectedRouteElement />}>
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/profile/orders" element={<ProfileOrdersPage />} />
-                    <Route path="/profile/orders/:id" element={<ProfileOrderDetailsPage />} />
-                </Route>
-                <Route path="/ingredients/:id" element={<Ingredient />} />
-            </Routes>
+            <FeedSocketProvider>
+                <ProfileOrdersSocketProvider>
+                    <Routes location={background || location}>
+                        <Route path="/" element={<MainBurger />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                        <Route
+                            path="/reset-password"
+                            element={state?.fromForgotPassword ? <ResetPasswordPage /> : <Navigate to="/forgot-password" replace />}
+                        />
+                        <Route path="/feed" element={<FeedPage />} />
+                        <Route path="/feed/:id" element={<FeedOrderPage />} />
+                        <Route element={<ProtectedRouteElement />}>
+                            <Route path="/profile" element={<ProfilePage />} />
+                            <Route path="/profile/orders" element={<ProfileOrdersPage />} />
+                            <Route path="/profile/orders/:id" element={<ProfileOrderDetailsPage />} />
+                        </Route>
+                        <Route path="/ingredients/:id" element={<Ingredient />} />
+                    </Routes>
+                </ProfileOrdersSocketProvider>
+            </FeedSocketProvider>
 
             {background && (
                 <Routes>

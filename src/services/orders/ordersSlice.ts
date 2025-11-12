@@ -1,25 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface Order {
-  ingredients: string[];
-  _id: string;
-  status: 'created' | 'pending' | 'done';
-  number: number;
-  createdAt: string;
-  updatedAt: string;
-  name: string;
-}
-
-export interface OrdersState {
-  orders: Order[];
-  total: number;
-  totalToday: number;
-}
+import { OrdersState } from '../../types/types';
 
 const initialState: OrdersState = {
   orders: [],
   total: 0,
   totalToday: 0,
+  loading: false,
 };
 
 export const ordersSlice = createSlice({
@@ -30,14 +16,19 @@ export const ordersSlice = createSlice({
       state.orders = action.payload.orders;
       state.total = action.payload.total;
       state.totalToday = action.payload.totalToday;
+      state.loading = false;
     },
     clearOrders(state) {
       state.orders = [];
       state.total = 0;
       state.totalToday = 0;
+      state.loading = false;
+    },
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.loading = action.payload;
     }
   },
 });
 
-export const { setOrders} = ordersSlice.actions;
+export const { setOrders, clearOrders, setLoading } = ordersSlice.actions;
 export default ordersSlice.reducer;

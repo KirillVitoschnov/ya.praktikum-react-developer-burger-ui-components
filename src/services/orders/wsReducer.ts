@@ -5,12 +5,7 @@ import {
   WS_CLOSE,
   WsActions
 } from './wsTypes';
-
-export interface WsState {
-  connected: boolean;
-  error: string | null;
-  messages: any[];
-}
+import type { WsState, WsErrorAction, WsMessageAction } from '../../types/types';
 
 const initialState: WsState = {
   connected: false,
@@ -25,11 +20,10 @@ export const wsReducer = (state = initialState, action: WsActions): WsState => {
     case WS_CLOSE:
       return { ...state, connected: false };
     case WS_ERROR:
-      return { ...state, error: action.payload };
+      return { ...state, error: (action as WsErrorAction).payload };
     case WS_MESSAGE:
-      return { ...state, messages: [...state.messages, action.payload] };
+      return { ...state, messages: [...state.messages, (action as WsMessageAction).payload] };
     default:
       return state;
   }
 };
-

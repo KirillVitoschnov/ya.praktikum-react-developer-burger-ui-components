@@ -2,21 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./order-card.module.css";
 import {CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-
-interface Ingredient {
-    _id: string;
-    name: string;
-    image: string;
-}
-
-interface Order {
-    _id: string;
-    number: number;
-    name: string;
-    status: string;
-    createdAt: string;
-    ingredients: string[];
-}
+import { Ingredient, Order } from "../../types/types";
 
 interface OrderCardProps {
     order: Order;
@@ -26,6 +12,24 @@ interface OrderCardProps {
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, allIngredients, url, location }) => {
+    const uniqueIngredientIds = Array.from(new Set(order.ingredients));
+
+    const grouped = React.useMemo(() => {
+        const map = new Map<string, { ing?: Ingredient; count: number }>();
+        order.ingredients.forEach((id) => {
+            const ing = allIngredients.find((i) => i._id === id);
+            const prev = map.get(id);
+            map.set(id, { ing, count: (prev?.count || 0) + 1 });
+        });
+        return Array.from(map.entries());
+    }, [order.ingredients, allIngredients]);
+
+    const totalPrice = React.useMemo(() => {
+        return grouped.reduce((sum, [_, { ing, count }]) => {
+            return sum + (ing?.price || 0) * count;
+        }, 0);
+    }, [grouped]);
+
     return (
         <li className={styles.orderCard}>
             <Link
@@ -40,8 +44,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, allIngredients, url, locat
                 <h3 className={styles.orderName}>{order.name}</h3>
                 <p className={styles.orderStatus}>{order.status}</p>
                 <div className={styles.orderFooter}>
-                    <div className={styles.ingredientsPreview} title={order.ingredients.join(", ")}>
-                        {order.ingredients.map((id, idx) => {
+                    <div className={styles.ingredientsPreview} title={uniqueIngredientIds.join(", ")}>
+                        {uniqueIngredientIds.map((id, idx) => {
                             const ingredient = allIngredients.find(item => item._id === id);
                             return ingredient ? (
                                 <img
@@ -54,7 +58,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, allIngredients, url, locat
                         })}
                     </div>
                     <div className={styles.orderPrice}>
-                        <span className={styles.priceValue}>{560}</span>
+                        <span className={styles.priceValue}>{totalPrice}</span>
                         <span className={styles.currencyIcon}>  <CurrencyIcon type="primary"/></span>
                     </div>
                 </div>

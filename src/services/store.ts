@@ -1,9 +1,19 @@
 import {configureStore} from "@reduxjs/toolkit";
 import rootReducer from "./rootReducer";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
-import { socketMiddleware } from "./socketMiddleware";
+import { socketMiddleware, TWsActions } from "./socketMiddleware";
 import { API_BASE_URL } from "../constants/api";
 
+const wsActions: TWsActions = {
+    wsConnect: 'WS_CONNECT',
+    wsDisconnect: 'WS_DISCONNECT',
+    wsConnecting: 'WS_CONNECTING',
+    onOpen: 'WS_OPEN',
+    onClose: 'WS_CLOSE',
+    onError: 'WS_ERROR',
+    onMessage: 'WS_MESSAGE',
+    wsSendMessage: 'WS_SEND',
+};
 
 const accessToken = localStorage.getItem("accessToken");
 const wsUrl = accessToken
@@ -18,7 +28,7 @@ export const store = configureStore({
         const middlewares = getDefaultMiddleware({
             serializableCheck: false,
         });
-        return wsUrl ? middlewares.concat(socketMiddleware(wsUrl)) : middlewares;
+        return wsUrl ? middlewares.concat(socketMiddleware(wsUrl, wsActions)) : middlewares;
     },
 });
 

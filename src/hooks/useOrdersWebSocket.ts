@@ -1,7 +1,7 @@
 import React from "react";
 import { useAppDispatch } from "../services/store";
 import { setOrders } from '../services/orders/ordersSlice';
-import { setUserOrders } from '../services/orders/userOrdersSlice';
+import { setUserOrdersFull } from '../services/orders/userOrdersSlice';
 import { useAuthRefresh } from "./useAuthRefresh";
 
 interface UseOrdersWebSocketResult {
@@ -23,6 +23,12 @@ export function useOrdersWebSocket(initialUrl: string | null, sliceType: "public
     const connect = React.useCallback(async () => {
         if (!wsUrl) return;
         if (wsRef.current) wsRef.current.close();
+        if (sliceType === "public") {
+            dispatch({ type: 'orders/setLoading', payload: true });
+        }
+        if (sliceType === "user") {
+            dispatch({ type: 'userOrders/setUserOrdersLoading', payload: true });
+        }
         try {
             const ws = new WebSocket(wsUrl);
             wsRef.current = ws;
@@ -52,13 +58,15 @@ export function useOrdersWebSocket(initialUrl: string | null, sliceType: "public
                             dispatch(setOrders({
                                 orders: data.orders,
                                 total: data.total,
-                                totalToday: data.totalToday
+                                totalToday: data.totalToday,
+                                loading: false
                             }));
                         } else {
-                            dispatch(setUserOrders({
+                            dispatch(setUserOrdersFull({
                                 orders: data.orders,
                                 total: data.total,
-                                totalToday: data.totalToday
+                                totalToday: data.totalToday,
+                                loading: false
                             }));
                         }
                     }
@@ -96,7 +104,7 @@ export function useOrdersWebSocket(initialUrl: string | null, sliceType: "public
             if (wsRef.current) wsRef.current.close();
             if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
         };
-    }, [connect]);
+    }, [connect, initialUrl]);
 
     React.useEffect(() => {
         if (wsUrl !== initialUrl) {
