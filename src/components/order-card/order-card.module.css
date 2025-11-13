@@ -4,6 +4,7 @@
     padding: 24px;
     transition: transform 0.2s;
     margin-bottom: 16px;
+    list-style: none;
 }
 
 .orderCard:hover {

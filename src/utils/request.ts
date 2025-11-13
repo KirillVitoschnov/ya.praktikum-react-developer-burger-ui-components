@@ -42,3 +42,4 @@ export function getAccessTokenFromLocalStorage(): string | null {
         return null;
     }
 }
+
