@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { useAppSelector, useAppDispatch } from "../../../services/store";
+import { useAppDispatch, useAppSelector } from "../../../services/store";
 import ProfileSidebar from "../../../components/profile-sidebar/ProfileSidebar";
 import OrderCard from '../../../components/order-card/OrderCard';
-import styles from "./OrdersPage.module.css";
+import styles from "./ProfileOrdersPage.module.css";
 import { useLocation } from "react-router-dom";
 import { useAuthRefresh } from '../../../hooks/useAuthRefresh';
 import { wsConnect, wsDisconnect } from "../../../services/orders/wsTypes";
@@ -29,7 +29,7 @@ console.log(wsUrl)
     }, [dispatch, wsUrl]);
 
     return (
-        <div className={styles.page}>
+        <div className={styles.container}>
             <ProfileSidebar />
             <div className={styles.ordersContent}>
                 <h2 className={styles.ordersTitle}>История заказов</h2>

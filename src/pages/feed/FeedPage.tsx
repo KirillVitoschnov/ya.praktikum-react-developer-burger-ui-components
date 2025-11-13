@@ -39,7 +39,7 @@ const FeedPage: React.FC = () => {
     }, [wsMessages]);
 
     useEffect(() => {
-        const wsUrl = getOrdersWebSocketUrl('public');
+        const wsUrl = getOrdersWebSocketUrl("public");
         if (wsUrl) {
             dispatch(wsConnect(wsUrl));
 
@@ -107,4 +107,3 @@ const FeedPage: React.FC = () => {
 };
 
 export default FeedPage;
-
