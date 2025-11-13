@@ -1,6 +1,9 @@
 .wrap {
     display: grid;
     place-items: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 .card {
 width: 100%;

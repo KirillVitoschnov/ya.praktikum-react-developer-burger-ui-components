@@ -32,7 +32,7 @@ const FeedPage: React.FC = () => {
     return (
         <div className={styles.container}>
             <div>
-                <h2>Лента заказов</h2>
+                <h2 className={styles.feedTitle}>Лента заказов</h2>
                 <div className={styles.feedList}>
                     {loading && <div>Загрузка...</div>}
                     {!loading && orders.length === 0 && <div>Нет заказов</div>}

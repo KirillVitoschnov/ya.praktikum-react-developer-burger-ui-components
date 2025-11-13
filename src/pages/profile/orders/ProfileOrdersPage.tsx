@@ -1,6 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { RootStore } from "../../../services/store";
+import { useAppSelector } from "../../../services/store";
 import ProfileSidebar from "../../../components/profile-sidebar/ProfileSidebar";
 import OrderCard from '../../../components/order-card/OrderCard';
 import styles from "./OrdersPage.module.css";
@@ -8,9 +7,9 @@ import { useLocation } from "react-router-dom";
 import { useAuthRefresh } from '../../../hooks/useAuthRefresh';
 
 const ProfileOrdersPage: React.FC = () => {
-    const orders = useSelector((state: RootStore) => state.userOrders.orders);
-    const allIngredients = useSelector((state: RootStore) => state.ingridients.ingridients);
-    const loading = useSelector((state: RootStore) => state.userOrders.loading);
+    const orders = useAppSelector(state => state.userOrders.orders);
+    const allIngredients = useAppSelector(state => state.ingridients.ingridients);
+    const loading = useAppSelector(state => state.userOrders.loading);
     const location = useLocation();
     useAuthRefresh();
 
@@ -18,7 +17,7 @@ const ProfileOrdersPage: React.FC = () => {
         <div className={styles.page}>
             <ProfileSidebar />
             <div className={styles.ordersContent}>
-                <h2>История заказов</h2>
+                <h2 className={styles.ordersTitle}>История заказов</h2>
                 <ul className={styles.ordersList}>
                     {loading && <li>Загрузка...</li>}
                     {!loading && orders.length === 0 && <li>Нет заказов</li>}

@@ -9,6 +9,13 @@
     gap: 40px;
 }
 
+.feedTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #f2f2f3;
+}
+
 .feedList {
     margin: 0;
     padding: 0;
@@ -16,6 +23,9 @@
     flex-direction: column;
     gap: 16px;
     list-style: none;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+    min-height: 0;
 }
 
 .stats {
