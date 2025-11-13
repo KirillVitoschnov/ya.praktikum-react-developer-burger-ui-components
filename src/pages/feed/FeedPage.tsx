@@ -1,8 +1,10 @@
-import React from "react";
-import { useAppSelector } from "../../services/store";
+import React, { useEffect } from "react";
+import { useAppSelector, useAppDispatch } from "../../services/store";
 import { useLocation } from "react-router-dom";
 import OrderCard from '../../components/order-card/OrderCard';
 import styles from "./FeedPage.module.css";
+import { wsConnect, wsDisconnect, wsMessage } from "../../services/orders/wsTypes";
+import { getOrdersWebSocketUrl } from "../../hooks/useOrdersWebSocketUrl";
 
 type Order = {
     _id: string;
@@ -15,19 +17,47 @@ type Order = {
 
 const FeedPage: React.FC = () => {
     const location = useLocation();
+    const dispatch = useAppDispatch();
 
-    const orders = useAppSelector(state => state.orders.orders);
+    const orders = useAppSelector(state => state.allOrders.orders); // Изменено на allOrders
     const allIngredients = useAppSelector(state => state.ingridients.ingridients);
-    const loading = useAppSelector(state => state.orders.loading);
+    const loading = useAppSelector(state => state.allOrders.loading); // Изменено на allOrders
 
 
-    const total = useAppSelector(state => state.orders.total) || 0;
-    const totalToday = useAppSelector(state => state.orders.totalToday) || 0;
+    const total = useAppSelector(state => state.allOrders.total) || 0; // Изменено на allOrders
+    const totalToday = useAppSelector(state => state.allOrders.totalToday) || 0; // Изменено на allOrders
 
     const doneOrders = orders.filter((order: Order) => order.status === 'done');
     const pendingOrders = orders.filter((order: Order) =>
         order.status === 'pending' || order.status === 'created'
     );
+
+    const wsMessages = useAppSelector(state => state.ws.messages);
+
+    useEffect(() => {
+        console.log('WebSocket Messages:', wsMessages);
+    }, [wsMessages]);
+
+    useEffect(() => {
+        const wsUrl = getOrdersWebSocketUrl('public');
+        if (wsUrl) {
+            dispatch(wsConnect(wsUrl));
+
+            return () => {
+                dispatch(wsDisconnect());
+            };
+        }
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (Array.isArray(wsMessages)) {
+            wsMessages.forEach((message) => {
+                if (message.orders) {
+                    dispatch(wsMessage(message.orders));
+                }
+            });
+        }
+    }, [wsMessages, dispatch]);
 
     return (
         <div className={styles.container}>
@@ -77,3 +107,4 @@ const FeedPage: React.FC = () => {
 };
 
 export default FeedPage;
+

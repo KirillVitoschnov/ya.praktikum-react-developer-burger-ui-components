@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { useAppSelector } from "../../services/store";
+import { useAppSelector, RootStore } from "../../services/store";
 import BurgerHeader from "../burger-header/burger-header";
 import ListIngridient from "../list-ingridient/list-ingridient";
 import { useInView } from "react-intersection-observer";
 import s from "./burger-ingredients.module.css";
 
 export default function BurgerIngredients() {
-    const { ingridients } = useAppSelector((state) => state.ingridients);
+    const { ingridients } = useAppSelector((state: RootStore) => state.ingridients);
     const [activeTab, setActiveTab] = useState("Булки");
 
     const bunRef = useRef<HTMLDivElement | null>(null);

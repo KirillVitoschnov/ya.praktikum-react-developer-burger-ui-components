@@ -5,6 +5,7 @@ import orderCostSlice from './constructor/orderCostSlice';
 import auth from './auth/authSlice'
 import ordersReducer from './orders/ordersSlice';
 import userOrdersReducer from './orders/userOrdersSlice';
+import allOrdersReducer from './orders/allOrdersSlice';
 import { wsReducer } from './orders/wsReducer';
 
 const rootReducer = combineReducers({
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
     auth,
     orders: ordersReducer,
     userOrders: userOrdersReducer,
+    allOrders: allOrdersReducer,
     ws: wsReducer
 })
 

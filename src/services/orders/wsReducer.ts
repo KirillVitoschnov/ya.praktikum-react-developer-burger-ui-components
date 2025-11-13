@@ -22,7 +22,11 @@ export const wsReducer = (state = initialState, action: WsActions): WsState => {
     case WS_ERROR:
       return { ...state, error: (action as WsErrorAction).payload };
     case WS_MESSAGE:
-      return { ...state, messages: [...state.messages, (action as WsMessageAction).payload] };
+      const newMessage = (action as WsMessageAction).payload;
+      return {
+        ...state,
+        messages: [...state.messages.slice(-49), newMessage],
+      };
     default:
       return state;
   }

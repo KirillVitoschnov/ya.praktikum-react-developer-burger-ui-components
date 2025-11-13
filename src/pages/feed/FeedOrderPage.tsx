@@ -9,9 +9,9 @@ interface FeedOrderPageProps {
 
 const FeedOrderPage: React.FC<FeedOrderPageProps> = ({ inModal }) => {
     const { id } = useParams<{ id: string }>();
-    const order = useAppSelector(state => state.orders.orders.find(o => o._id === id || o.number === Number(id)));
+    const order = useAppSelector(state => state.allOrders.orders.find(o => o._id === id || o.number === Number(id)));
     const allIngredients = useAppSelector(state => state.ingridients.ingridients);
-    const loading = useAppSelector(state => state.orders.loading);
+    const loading = useAppSelector(state => state.allOrders.loading);
 
     if (order) {
         return <OrderInfo order={order} allIngredients={allIngredients} />;

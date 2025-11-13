@@ -20,14 +20,10 @@ import ProtectedRouteElement from "../protecred-route/ProtectedRouteElement";
 import Modal from "../modal/modal";
 import { useAppDispatch } from "../../services/store";
 import { fetchIngridients } from "../../services/ingridients/ingridientsSlice";
-import { useOrdersWebSocketUrl } from "../../hooks/useOrdersWebSocketUrl";
 import FeedPage from "../../pages/feed/FeedPage";
 import FeedOrderPage from "../../pages/feed/FeedOrderPage";
 import ProfileOrdersPage from "../../pages/profile/orders/ProfileOrdersPage";
 import ProfileOrderDetailsPage from "../../pages/profile/orders/ProfileOrderDetailsPage";
-import { WS_CONNECT, WS_DISCONNECT } from "../../services/orders/wsTypes";
-import FeedSocketProvider from "../../pages/feed/FeedSocketProvider";
-import ProfileOrdersSocketProvider from "../../pages/profile/orders/ProfileOrdersSocketProvider";
 
 function IngredientModalRoute() {
     const navigate = useNavigate();
@@ -66,8 +62,6 @@ function AppRoutes() {
 
     return (
         <>
-            <FeedSocketProvider>
-                <ProfileOrdersSocketProvider>
                     <Routes location={background || location}>
                         <Route path="/" element={<MainBurger />} />
                         <Route path="/login" element={<LoginPage />} />
@@ -86,8 +80,6 @@ function AppRoutes() {
                         </Route>
                         <Route path="/ingredients/:id" element={<Ingredient />} />
                     </Routes>
-                </ProfileOrdersSocketProvider>
-            </FeedSocketProvider>
 
             {background && (
                 <Routes>
@@ -104,17 +96,6 @@ function AppRoutes() {
 
 export default function App() {
     const dispatch = useAppDispatch();
-    const wsUrl = useOrdersWebSocketUrl();
-
-    useEffect(() => {
-        if (wsUrl) {
-            dispatch({ type: WS_CONNECT });
-        }
-        return () => {
-            dispatch({ type: WS_DISCONNECT });
-        };
-    }, [dispatch, wsUrl]);
-
     useEffect(() => {
         dispatch(fetchIngridients());
     }, [dispatch]);
