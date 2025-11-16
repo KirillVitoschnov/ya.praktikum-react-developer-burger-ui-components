@@ -1,0 +1,32 @@
+.sidebar {
+  max-width: 250px;
+  padding: 32px 24px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+}
+.link {
+  background: none;
+  border: none;
+  color: #8585ad;
+  font-size: 18px;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.active {
+  color: #f2f2f3;
+}
+.info {
+  margin-top: 32px;
+  color: #8585ad;
+  font-size: 16px;
+}

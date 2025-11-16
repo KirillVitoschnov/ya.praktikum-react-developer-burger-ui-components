@@ -1,6 +1,6 @@
 import { useDrop } from "react-dnd";
 import { Ingridient } from "../../types/types";
-import { useAppDispatch, useAppSelector } from "../../services/store";
+import { useAppDispatch, useAppSelector, RootStore } from "../../services/store";
 import { addConstructorItem, deleteItem } from "../../services/constructor/constructorItemsSlice";
 import ConstructorItem from "../constructor-item/constructor-item";
 import ConfirmOrder from "../confirm-order/confirm-order";
@@ -9,7 +9,7 @@ import s from "./burger-constructor.module.css";
 type DragPayload = { ingridient: Ingridient; index?: number };
 
 export default function BurgerConstructor() {
-    const { constructorItems: items, bun } = useAppSelector((st) => st.constructorItems);
+    const { constructorItems: items, bun } = useAppSelector((st: RootStore) => st.constructorItems);
     const send = useAppDispatch();
 
     const removeAt = (idx: number) => {

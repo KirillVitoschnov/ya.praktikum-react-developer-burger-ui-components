@@ -1,6 +1,5 @@
-import { request } from "../utils/request";
+import { request, getAccessTokenFromLocalStorage } from "../utils/request";
 import { API_BASE_URL } from "../constants/api";
-
 import { setOrder } from "./constructor/orderCostSlice";
 import { clearConstructor } from "./constructor/constructorItemsSlice";
 import { AppDispatch } from "./store";
@@ -23,9 +22,14 @@ export const createOrder = async (
     }
     setLoading(true);
     try {
+        const accessToken = getAccessTokenFromLocalStorage();
+        const headers: Record<string, string> = { "Content-Type": "application/json" };
+        if (accessToken) {
+            headers["Authorization"] = `Bearer ${accessToken}`;
+        }
         const data = await request(`${API_BASE_URL}orders`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers,
             body: JSON.stringify({ ingredients }),
         }) as CreateOrderPayload;
         dispatch(setOrder({ number: data.order.number, name: data.name }));

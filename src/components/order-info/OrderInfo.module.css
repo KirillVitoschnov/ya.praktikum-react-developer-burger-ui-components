@@ -1,0 +1,129 @@
+.wrap {
+    display: grid;
+    place-items: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.card {
+width: 100%;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+.number {
+    letter-spacing: .08em;
+    color: #a6adbb;
+    font-size: 14px;
+}
+.title {
+    margin-top: 12px;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+.status {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.statusDone { color: #30e1b9; }
+.statusPending { color: #ffd166; }
+.statusDefault { color: #9aa3b2; }
+.sectionTitle {
+    margin-top: 22px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: .02em;
+}
+.list {
+    margin-top: 12px;
+    max-height: 300px;
+    overflow: auto;
+    padding-right: 6px;
+}
+.list::-webkit-scrollbar { width: 6px; }
+.list::-webkit-scrollbar-thumb { background: #3a3f52; border-radius: 4px; }
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.row:last-child { border-bottom: none; }
+.left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+.avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: radial-gradient(60% 60% at 50% 40%, #6a5cff 0%, #3a2fff 60%, #211a5c 100%);
+    box-shadow: 0 0 0 3px #1a1c24, 0 10px 20px rgba(60,56,255,.25) inset;
+}
+.avatarPlaceholder {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #242736;
+}
+.name {
+    font-size: 16px;
+    line-height: 1.2;
+    color: #dce2ea;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.price {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.qty {
+    font-weight: 700;
+    font-size: 16px;
+    color: #cbd3df;
+    display: flex;
+    align-items: center;
+}
+.footer {
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #9aa3b2;
+    font-size: 14px;
+}
+.total {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.totalValue {
+    font-weight: 800;
+    color: #e9ecf1;
+    letter-spacing: .02em;
+    display: flex;
+    align-items: center;
+}
+@media (max-width: 520px) {
+    .card { padding: 22px 18px 16px; border-radius: 18px; }
+    .title { font-size: 20px; }
+    .avatar { width: 38px; height: 38px; }
+    .name { font-size: 15px; }
+}

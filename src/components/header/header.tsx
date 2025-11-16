@@ -21,7 +21,7 @@ export default function Header() {
                     </li>
 
                     <li className={s.iconBox}>
-                        <NavLink to="/profile/orders" className={({ isActive }) => s.link}>
+                        <NavLink to="/feed" className={({ isActive }) => s.link}>
                             {({ isActive }) => (
                                 <>
                                     <ListIcon type={isActive ? "primary" : "secondary"} />

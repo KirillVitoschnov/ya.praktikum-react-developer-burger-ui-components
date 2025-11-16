@@ -2,57 +2,19 @@ import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/tool
 import { request } from "../../utils/request";
 import type { RootStore } from "../store";
 import { API_BASE_URL } from '../../constants/api';
+import type {
+  User,
+  AuthState,
+  LoginResponse,
+  RegisterResponse,
+  RefreshResponse,
+  LogoutResponse,
+  GetUserResponse,
+  UpdateUserResponse
+} from '../../types/types';
 
 const ACCESS_TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";
-
-export interface User {
-    email: string;
-    name: string;
-}
-
-interface LoginResponse {
-    success: boolean;
-    accessToken: string;
-    refreshToken: string;
-    user: User;
-}
-
-interface RegisterResponse {
-    success: boolean;
-    accessToken: string;
-    refreshToken: string;
-    user: User;
-}
-
-interface RefreshResponse {
-    success: boolean;
-    accessToken: string;
-    refreshToken: string;
-}
-
-interface LogoutResponse {
-    success: boolean;
-    message: string;
-}
-
-interface GetUserResponse {
-    success: boolean;
-    user: User;
-}
-
-interface UpdateUserResponse {
-    success: boolean;
-    user: User;
-}
-
-export interface AuthState {
-    isAuthenticated: boolean;
-    user: User | null;
-    accessToken: string | null;
-    status: "idle" | "loading" | "succeeded" | "failed";
-    error: string | null;
-}
 
 const stripBearer = (token: string) =>
     token?.startsWith("Bearer ") ? token.replace("Bearer ", "") : token;
@@ -100,23 +62,18 @@ export const logoutApi = async (refreshToken: string): Promise<LogoutResponse> =
 export const getUserApi = async (accessToken: string): Promise<GetUserResponse> =>
     request(`${API_BASE_URL}auth/user`, {
         method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${accessToken}`,
-        },
+        headers: { "Authorization": accessToken },
     }) as Promise<GetUserResponse>;
 
 export const updateUserApi = async (
     accessToken: string,
-    data: Partial<{ name: string; email: string; password: string }>
+    name: string,
+    email: string
 ): Promise<UpdateUserResponse> =>
     request(`${API_BASE_URL}auth/user`, {
         method: "PATCH",
-        body: JSON.stringify(data),
-        headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${accessToken}`,
-        },
+        body: JSON.stringify({ name, email }),
+        headers: { "Content-Type": "application/json", "Authorization": accessToken },
     }) as Promise<UpdateUserResponse>;
 
 const getAccess = (state: RootStore) =>
@@ -223,12 +180,12 @@ export const updateCurrentUser = createAsyncThunk<
     if (!access) return rejectWithValue("Нет access токена");
 
     try {
-        const res = await updateUserApi(access, payload);
+        const res = await updateUserApi(access, payload.name, payload.email);
         return res.user;
     } catch (e: unknown) {
         try {
             access = await dispatch(refreshAccessToken()).unwrap();
-            const res = await updateUserApi(access, payload);
+            const res = await updateUserApi(access, payload.name, payload.email);
             return res.user;
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : "Не удалось обновить пользователя";

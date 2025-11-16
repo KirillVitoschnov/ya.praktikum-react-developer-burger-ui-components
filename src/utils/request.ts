@@ -33,3 +33,13 @@ export function requestSuccess<T = unknown>(
         .then(checkResponse)
         .then((data) => checkSuccess<T>(data));
 }
+
+export function getAccessTokenFromLocalStorage(): string | null {
+    try {
+        const token = localStorage.getItem('accessToken');
+        return token ? token : null;
+    } catch {
+        return null;
+    }
+}
+
