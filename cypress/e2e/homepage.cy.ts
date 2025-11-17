@@ -17,6 +17,26 @@ describe('Burger Constructor Interaction', () => {
             }
         });
     });
+    it('should open and close ingredient details modal', () => {
+        cy.contains('h2', 'Булки')
+            .parent()
+            .find('[class*="card-ingridient_card__"]')
+            .first()
+            .click();
+
+        cy.get('section[class*="modal_modal__"]')
+            .should('be.visible');
+
+        cy.contains('Детали ингредиента')
+            .should('be.visible');
+
+        cy.get('button[class*="modal_modal__btn__"]')
+            .click();
+
+        cy.get('section[class*="modal_modal__"]')
+            .should('not.exist');
+    });
+
 
     function selectIngredientBySection(sectionName) {
         cy.contains('h2', sectionName)
