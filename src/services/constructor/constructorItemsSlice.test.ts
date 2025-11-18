@@ -60,4 +60,20 @@ describe('constructorItemsSlice', () => {
     expect(state.constructorItems.length).toBe(1);
     expect(state.constructorItems[0].uniqueId).toBeDefined();
   });
+
+  it('должен перемещать ингредиенты внутри конструктора', () => {
+    const stateWithItems = {
+      bun: null,
+      constructorItems: [testMain, testMain],
+      constructorItemsRequest: false,
+      constructorItemsFailed: false,
+    };
+    // Перемещаем элемент с позиции 0 на позицию 1
+    const action = {
+      type: 'constructorItems/setConstructorItem',
+      payload: { start: 0, end: 1 },
+    };
+    const result = constructorReducer(stateWithItems, action);
+    expect(result.constructorItems[1]).toEqual(testMain);
+  });
 });

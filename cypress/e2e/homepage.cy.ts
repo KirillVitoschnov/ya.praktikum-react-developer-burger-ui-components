@@ -3,21 +3,11 @@ const LOGIN_PASSWORD = 'lejitiv169@agenra.com';
 
 describe('Burger Constructor Interaction', () => {
     beforeEach(() => {
-        cy.visit('http://localhost:3000/login');
-
-        cy.get('input[type="email"]').type(LOGIN_EMAIL);
-        cy.get('input[type="password"]').type(LOGIN_PASSWORD);
-        cy.contains('button', 'Войти').click();
-
-        cy.url().should('eq', 'http://localhost:3000/');
-
-        cy.get('body').then(($body) => {
-            if ($body.find('button:contains("Очистить корзину")').length > 0) {
-                cy.contains('button', 'Очистить корзину').click();
-            }
-        });
+        cy.login(LOGIN_EMAIL, LOGIN_PASSWORD);
+        cy.clearCart();
     });
-    it('should open and close ingredient details modal', () => {
+
+    it('should open ingredient details modal and check content', () => {
         cy.contains('h2', 'Булки')
             .parent()
             .find('[class*="card-ingridient_card__"]')
@@ -25,33 +15,95 @@ describe('Burger Constructor Interaction', () => {
             .click();
 
         cy.get('section[class*="modal_modal__"]')
-            .should('be.visible');
-
-        cy.contains('Детали ингредиента')
-            .should('be.visible');
+            .should('be.visible')
+            .within(() => {
+                cy.get('header[class*="modal_modal__header__"] h1')
+                    .should('have.text', 'Детали ингредиента');
+                cy.get('.ingredient-details_details__xokdJ').within(() => {
+                    cy.get('img').should('have.attr', 'alt').and('include', 'булка');
+                    cy.get('p.ingredient-details_details__name__AWCIS')
+                        .should('contain.text', 'булка');
+                    cy.get('.ingredient-details_details__compound__pi0Hp')
+                        .within(() => {
+                            cy.contains('Калории, ккал').should('exist');
+                            cy.contains('Белки, г').should('exist');
+                            cy.contains('Жиры, г').should('exist');
+                            cy.contains('Углеводы, г').should('exist');
+                        });
+                });
+            });
 
         cy.get('button[class*="modal_modal__btn__"]')
             .click();
 
-        cy.get('section[class*="modal_modal__"]')
-            .should('not.exist');
+        cy.get('section[class*="modal_modal__"]').should('not.exist');
     });
 
+    it('should add ingredient from list to constructor', () => {
+        cy.get('[class*="burger-ingredients_burger__left__"]', { timeout: 10000 }).should('be.visible');
 
-    function selectIngredientBySection(sectionName) {
-        cy.contains('h2', sectionName)
+        cy.contains('h2', 'Булки')
             .parent()
-            .find('[class*="card-ingridient_card__"]')
+            .find('[class*="card-ingridient_card__cgQTP"]')
             .first()
-            .drag('[class*="burger-constructor_main__container__"]');
-    }
+            .then(($ingredient) => {
+                const ingredientName = $ingredient.find('p').text();
+                const ingredientPrice = $ingredient.find('[class*="card-ingridient_card__price__"]').text();
+
+                const dataTransfer = new DataTransfer();
+                cy.wrap($ingredient)
+                    .trigger('dragstart', { dataTransfer });
+
+                cy.get('[class*="burger-constructor_main__container__"]')
+                    .trigger('drop', { dataTransfer });
+
+                cy.get('[class*="burger-constructor_main__container__"]')
+                    .should('contain.text', ingredientName)
+                    .and('contain.text', ingredientPrice);
+            });
+    });
 
     it('should create a burger, reorder ingredients, and place an order', () => {
         cy.intercept('POST', '/api/orders').as('createOrder');
 
-        selectIngredientBySection('Булки');
-        selectIngredientBySection('Соусы');
-        selectIngredientBySection('Начинки');
+        cy.contains('h2', 'Булки')
+            .parent()
+            .find('[class*="card-ingridient_card__cgQTP"]')
+            .first()
+            .then(($bun) => {
+                const dataTransfer = new DataTransfer();
+                cy.wrap($bun)
+                    .trigger('dragstart', { dataTransfer });
+
+                cy.get('[class*="burger-constructor_main__container__"]')
+                    .trigger('drop', { dataTransfer });
+            });
+
+        cy.contains('h2', 'Соусы')
+            .parent()
+            .find('[class*="card-ingridient_card__cgQTP"]')
+            .first()
+            .then(($sauce) => {
+                const dataTransfer = new DataTransfer();
+                cy.wrap($sauce)
+                    .trigger('dragstart', { dataTransfer });
+
+                cy.get('[class*="burger-constructor_main__container__"]')
+                    .trigger('drop', { dataTransfer });
+            });
+
+        cy.contains('h2', 'Начинки')
+            .parent()
+            .find('[class*="card-ingridient_card__cgQTP"]')
+            .first()
+            .then(($filling) => {
+                const dataTransfer = new DataTransfer();
+                cy.wrap($filling)
+                    .trigger('dragstart', { dataTransfer });
+
+                cy.get('[class*="burger-constructor_main__container__"]')
+                    .trigger('drop', { dataTransfer });
+            });
 
         cy.contains('button', 'Оформить заказ')
             .should('not.be.disabled')
