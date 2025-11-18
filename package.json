@@ -34,7 +34,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cypress:open": "cypress open",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -58,6 +61,10 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/redux-logger": "^3.0.13",
     "@types/uniqid": "^5.3.4",
-    "@types/uuid": "^9.0.8"
-  }
+    "@types/uuid": "^9.0.8",
+    "cypress": "^15.6.0",
+    "cypress-drag-drop": "^1.1.1",
+    "gh-pages": "^6.3.0"
+  },
+  "homepage": "https://KirillVitoschnov.github.io/ya.praktikum-react-developer-burger-ui-components"
 }
